@@ -1,15 +1,14 @@
 import Tile from './tile';
 
 class Maze {
-  constructor(height = 40, width = 60) {
-    this.open = [];
-    this.close = [];
-    this.startPos = [height / 2, width * (1 / 4)];
-    this.endPos = [height / 2, width * (3 / 4)];
+  constructor(height = 30, width = 50) {
+    this.startPos = [Math.floor(height / 2), Math.floor(width * (1 / 4))];
+    this.endPos = [Math.floor(height / 2), Math.floor(width * (3 / 4))];
     this.initializeGrid = this.initializeGrid.bind(this);
     this.grid = this.initializeGrid(height, width);
     this.setVal = this.setVal.bind(this);
-    this.addWall = this.addWall.bind(this);
+    this.toggleWall = this.toggleWall.bind(this);
+    this.solve = this.solve.bind(this);
   }
 
   initializeGrid(height, width) {
@@ -21,8 +20,17 @@ class Maze {
       }
       grid.push(row);
     }
-    grid[this.startPos[0]][this.startPos[1]].className = 'start';
-    grid[this.endPos[0]][this.endPos[1]].className = 'end';
+
+    let startTile = grid[this.startPos[0]][this.startPos[1]];
+    startTile.className = 'start';
+    startTile.open = false;
+    startTile.closed = true;
+
+    let endTile = grid[this.endPos[0]][this.endPos[1]];
+    endTile.className = 'end';
+    endTile.open = false;
+    endTile.closed = true;
+
     return grid;
   }
 
@@ -30,10 +38,39 @@ class Maze {
     this.grid[pos[0]][pos[1]].className = val;
   }
 
-  addWall(pos) {
+  toggleWall(pos) {
     let tile = this.grid[pos[0]][pos[1]];
     // check if tile is empty before adding wall
-    if (tile === 'empty') this.setVal(tile, 'wall');
+    if (tile.className.includes('empty')) {
+      tile.removeClass('empty');
+      tile.addClass('wall');
+    } else if (tile.className.includes('wall')) {
+      tile.removeClass('wall');
+      tile.addClass('empty');
+    }
+  }
+
+  tile(pos) {
+    return this.grid[pos[0],pos[1]];
+  }
+
+  solve() {
+    this.closed = [this.tile(this.startPos)];
+    this.open = [];
+    while (!this.gameover) {
+      this.step();
+    }
+  }
+
+  step(secs = 0) {
+    let currentTile = this.closed[this.closed.length - 1];
+    this.openTiles(currentTile, finished => {
+      if (finished) this.tracePath();
+    });
+  }
+
+  tracePath() {
+
   }
 }
 

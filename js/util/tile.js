@@ -7,7 +7,7 @@ class Tile {
     this.className = className;
     this.hCost = 0;
     this.gCost = 0;
-    this.open = false;
+    this.open = true;
     this.closed = false;
     this.fCost = this.fCost.bind(this);
     this.addClass = this.addClass.bind(this);
@@ -25,7 +25,7 @@ class Tile {
   removeClass(name) {
     let names = this.className.split(' ');
     let idx = names.indexOf(name);
-    this.className = names.splice(idx, 1).join(' ');
+    this.className = names.splice(idx, 0).join(' ');
   }
 }
 

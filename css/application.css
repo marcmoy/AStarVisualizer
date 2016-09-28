@@ -1,10 +1,92 @@
+html {
+  background: #eee; /* For browsers that do not support gradients */
+  background: -webkit-linear-gradient(#eee, white); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(#eee, white); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(#eee, white); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(#eee, white); /* Standard syntax */
+  font-family: 'Nunito', sans-serif;
+  height: 100%;
+}
+
+div.container {
+
+}
+
+h1.title {
+  margin: 30px 50px;
+  color: #557dce;
+  font-size: 48px;
+  text-shadow: 1px 1px 1px #000;
+}
+
+h2.author {
+  font-size: 18px;
+  margin: -20px 0px 20px 80px;
+  text-decoration: italicize;
+}
+
+.grid {
+  float: left;
+  margin-left: 30px;
+}
+
 td {
   height: 10px;
   width: 10px;
   outline: 1px solid #eee;
+  cursor: pointer;
 }
 
 td.start { background-color: green }
 td.end { background-color: red }
-td.empty { background: transparent }
+td.empty { background: white }
 td.wall { background-color: #ccc }
+
+.settings {
+  float: left;
+}
+
+.settings ul {
+  list-style-type: none;
+  overflow: hidden;
+}
+
+button {
+  font-family: "Oxygen", sans-serif;
+  font-size: 16px;
+  -webkit-border-radius: 9;
+  -moz-border-radius: 9;
+  border-radius: 9px;
+  text-shadow: 1px 1px 4px #666666;
+  box-shadow: 0 4px #27496d;
+  color: #fff;
+  background: #3498db;
+  padding: 8px 20px 10px 20px;
+  text-decoration: none;
+  border: none;
+  margin: 8px 4px;
+  width: 14em;
+  float: left;
+}
+
+button:hover {
+  background: #3cb0fd;
+  text-decoration: none;
+}
+
+button:focus {
+  outline: 0;
+}
+
+button.active {
+  box-shadow: 0 2px #27496d;
+  background: #3cb0fd;
+  transform: translateY(2px);
+}
+
+.slider {
+  display: block;
+  width: 100%;
+  float: left;
+  margin: 20px 50px;
+}

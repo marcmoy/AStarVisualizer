@@ -1,9 +1,33 @@
 import React from 'react';
 
-const Settings = () => {
+const Settings = ({ toggleStartPicker, toggleEndPicker, startOn, endOn }) => {
   return(
-    <div>
-      Settings
+    <div className='settings'>
+      <ul>
+
+        <li>
+          <button
+            onClick={toggleStartPicker}
+            className={startOn ? 'active' : ''}>
+            Set start node
+          </button>
+        </li>
+
+        <li>
+          <button
+            onClick={toggleEndPicker}
+            className={endOn ? 'active' : ''}>
+            Set end node
+          </button>
+        </li>
+
+        <li>
+          <button>
+            Solve
+          </button>
+        </li>
+
+      </ul>
     </div>
   );
 };

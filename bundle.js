@@ -54,15 +54,15 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _app = __webpack_require__(172);
+	var _maze_solver = __webpack_require__(172);
 	
-	var _app2 = _interopRequireDefault(_app);
+	var _maze_solver2 = _interopRequireDefault(_maze_solver);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	document.addEventListener('DOMContentLoaded', function () {
 	  var root = document.getElementById('root');
-	  _reactDom2.default.render(_react2.default.createElement(_app2.default, null), root);
+	  _reactDom2.default.render(_react2.default.createElement(_maze_solver2.default, null), root);
 	});
 
 /***/ },
@@ -21448,63 +21448,9 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _maze_solver = __webpack_require__(173);
-	
-	var _maze_solver2 = _interopRequireDefault(_maze_solver);
-	
-	var _settings = __webpack_require__(176);
+	var _settings = __webpack_require__(173);
 	
 	var _settings2 = _interopRequireDefault(_settings);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var App = function (_React$Component) {
-	  _inherits(App, _React$Component);
-	
-	  function App() {
-	    _classCallCheck(this, App);
-	
-	    return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
-	  }
-	
-	  _createClass(App, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(_maze_solver2.default, null),
-	        _react2.default.createElement(_settings2.default, null)
-	      );
-	    }
-	  }]);
-	
-	  return App;
-	}(_react2.default.Component);
-	
-	exports.default = App;
-
-/***/ },
-/* 173 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
 	
 	var _maze = __webpack_require__(174);
 	
@@ -21526,20 +21472,30 @@
 	
 	    var _this = _possibleConstructorReturn(this, (MazeSolver.__proto__ || Object.getPrototypeOf(MazeSolver)).call(this));
 	
-	    _this.state = { maze: new _maze2.default() };
+	    _this.state = { maze: new _maze2.default(), startPicker: false, endPicker: false };
 	    _this.renderGrid = _this.renderGrid.bind(_this);
+	    _this.handleClick = _this.handleClick.bind(_this);
+	    _this.handleMouseOver = _this.handleMouseOver.bind(_this);
+	    _this.toggleStartPicker = _this.toggleStartPicker.bind(_this);
+	    _this.toggleEndPicker = _this.toggleEndPicker.bind(_this);
 	    return _this;
 	  }
 	
 	  _createClass(MazeSolver, [{
 	    key: 'renderGrid',
 	    value: function renderGrid() {
+	      var _this2 = this;
+	
 	      var grid = this.state.maze.grid.map(function (row, i) {
 	
 	        var tiles = row.map(function (tile, j) {
 	          var pos = tile.pos;
-	          debugger;
-	          return _react2.default.createElement('td', { className: tile.className, value: pos, key: pos });
+	          return _react2.default.createElement('td', {
+	            className: tile.className,
+	            value: pos,
+	            key: pos,
+	            onMouseDown: _this2.handleClick,
+	            onMouseOver: _this2.handleMouseOver });
 	        });
 	
 	        return _react2.default.createElement(
@@ -21551,7 +21507,7 @@
 	
 	      return _react2.default.createElement(
 	        'table',
-	        { className: 'grid' },
+	        null,
 	        _react2.default.createElement(
 	          'tbody',
 	          null,
@@ -21560,12 +21516,84 @@
 	      );
 	    }
 	  }, {
+	    key: 'toggleStartPicker',
+	    value: function toggleStartPicker() {
+	      if (this.state.startPicker) {
+	        this.setState({ startPicker: false });
+	      } else {
+	        this.setState({ startPicker: true, endPicker: false });
+	      }
+	    }
+	  }, {
+	    key: 'toggleEndPicker',
+	    value: function toggleEndPicker() {
+	      if (this.state.endPicker) {
+	        this.setState({ endPicker: false });
+	      } else {
+	        this.setState({ endPicker: true, startPicker: false });
+	      }
+	    }
+	  }, {
+	    key: 'handleClick',
+	    value: function handleClick(e) {
+	      var maze = this.state.maze;
+	      var pos = e.target.attributes.value.value.split(',').map(function (i) {
+	        return parseInt(i);
+	      });
+	
+	      if (this.state.startPicker) {
+	        maze.setStart(pos);
+	      } else if (this.stateEndPicker) {
+	        maze.setEnd(pos);
+	      } else {
+	        maze.toggleWall(pos);
+	      }
+	
+	      this.setState({ maze: maze });
+	    }
+	  }, {
+	    key: 'handleMouseOver',
+	    value: function handleMouseOver(e) {
+	      var maze = this.state.maze;
+	      var pos = e.target.attributes.value.value.split(',').map(function (i) {
+	        return parseInt(i);
+	      });
+	      if (this.state.startPicker || this.state.endPicker) return;
+	      if (e.buttons) maze.toggleWall(pos);
+	      this.setState({ maze: maze });
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'div',
-	        null,
-	        this.renderGrid()
+	        { className: 'container' },
+	        _react2.default.createElement(
+	          'h1',
+	          { className: 'title' },
+	          'Maze Solver Visualizer'
+	        ),
+	        _react2.default.createElement(
+	          'h2',
+	          { className: 'author' },
+	          'by Marc Moy'
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'grid' },
+	          this.renderGrid()
+	        ),
+	        _react2.default.createElement(_settings2.default, {
+	          toggleStartPicker: this.toggleStartPicker,
+	          toggleEndPicker: this.toggleEndPicker,
+	          startOn: this.state.startPicker,
+	          endOn: this.state.endPicker
+	        }),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'slider' },
+	          'slider area'
+	        )
 	      );
 	    }
 	  }]);
@@ -21574,6 +21602,71 @@
 	}(_react2.default.Component);
 	
 	exports.default = MazeSolver;
+
+/***/ },
+/* 173 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Settings = function Settings(_ref) {
+	  var toggleStartPicker = _ref.toggleStartPicker;
+	  var toggleEndPicker = _ref.toggleEndPicker;
+	  var startOn = _ref.startOn;
+	  var endOn = _ref.endOn;
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'settings' },
+	    _react2.default.createElement(
+	      'ul',
+	      null,
+	      _react2.default.createElement(
+	        'li',
+	        null,
+	        _react2.default.createElement(
+	          'button',
+	          {
+	            onClick: toggleStartPicker,
+	            className: startOn ? 'active' : '' },
+	          'Set start node'
+	        )
+	      ),
+	      _react2.default.createElement(
+	        'li',
+	        null,
+	        _react2.default.createElement(
+	          'button',
+	          {
+	            onClick: toggleEndPicker,
+	            className: endOn ? 'active' : '' },
+	          'Set end node'
+	        )
+	      ),
+	      _react2.default.createElement(
+	        'li',
+	        null,
+	        _react2.default.createElement(
+	          'button',
+	          null,
+	          'Solve'
+	        )
+	      )
+	    )
+	  );
+	};
+	
+	exports.default = Settings;
 
 /***/ },
 /* 174 */
@@ -21597,19 +21690,18 @@
 	
 	var Maze = function () {
 	  function Maze() {
-	    var height = arguments.length <= 0 || arguments[0] === undefined ? 40 : arguments[0];
-	    var width = arguments.length <= 1 || arguments[1] === undefined ? 60 : arguments[1];
+	    var height = arguments.length <= 0 || arguments[0] === undefined ? 30 : arguments[0];
+	    var width = arguments.length <= 1 || arguments[1] === undefined ? 50 : arguments[1];
 	
 	    _classCallCheck(this, Maze);
 	
-	    this.open = [];
-	    this.close = [];
-	    this.startPos = [height / 2, width * (1 / 4)];
-	    this.endPos = [height / 2, width * (3 / 4)];
+	    this.startPos = [Math.floor(height / 2), Math.floor(width * (1 / 4))];
+	    this.endPos = [Math.floor(height / 2), Math.floor(width * (3 / 4))];
 	    this.initializeGrid = this.initializeGrid.bind(this);
 	    this.grid = this.initializeGrid(height, width);
 	    this.setVal = this.setVal.bind(this);
-	    this.addWall = this.addWall.bind(this);
+	    this.toggleWall = this.toggleWall.bind(this);
+	    this.solve = this.solve.bind(this);
 	  }
 	
 	  _createClass(Maze, [{
@@ -21623,8 +21715,17 @@
 	        }
 	        grid.push(row);
 	      }
-	      grid[this.startPos[0]][this.startPos[1]].className = 'start';
-	      grid[this.endPos[0]][this.endPos[1]].className = 'end';
+	
+	      var startTile = grid[this.startPos[0]][this.startPos[1]];
+	      startTile.className = 'start';
+	      startTile.open = false;
+	      startTile.closed = true;
+	
+	      var endTile = grid[this.endPos[0]][this.endPos[1]];
+	      endTile.className = 'end';
+	      endTile.open = false;
+	      endTile.closed = true;
+	
 	      return grid;
 	    }
 	  }, {
@@ -21633,12 +21734,47 @@
 	      this.grid[pos[0]][pos[1]].className = val;
 	    }
 	  }, {
-	    key: 'addWall',
-	    value: function addWall(pos) {
+	    key: 'toggleWall',
+	    value: function toggleWall(pos) {
 	      var tile = this.grid[pos[0]][pos[1]];
 	      // check if tile is empty before adding wall
-	      if (tile === 'empty') this.setVal(tile, 'wall');
+	      if (tile.className.includes('empty')) {
+	        tile.removeClass('empty');
+	        tile.addClass('wall');
+	      } else if (tile.className.includes('wall')) {
+	        tile.removeClass('wall');
+	        tile.addClass('empty');
+	      }
 	    }
+	  }, {
+	    key: 'tile',
+	    value: function tile(pos) {
+	      return this.grid[(pos[0], pos[1])];
+	    }
+	  }, {
+	    key: 'solve',
+	    value: function solve() {
+	      this.closed = [this.tile(this.startPos)];
+	      this.open = [];
+	      while (!this.gameover) {
+	        this.step();
+	      }
+	    }
+	  }, {
+	    key: 'step',
+	    value: function step() {
+	      var _this = this;
+	
+	      var secs = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
+	
+	      var currentTile = this.closed[this.closed.length - 1];
+	      this.openTiles(currentTile, function (finished) {
+	        if (finished) _this.tracePath();
+	      });
+	    }
+	  }, {
+	    key: 'tracePath',
+	    value: function tracePath() {}
 	  }]);
 	
 	  return Maze;
@@ -21664,26 +21800,28 @@
 	
 	var Tile = function () {
 	  function Tile(pos, startPos, endPos) {
-	    var _this = this;
-	
 	    var className = arguments.length <= 3 || arguments[3] === undefined ? 'empty' : arguments[3];
 	
 	    _classCallCheck(this, Tile);
 	
-	    this.id = count;
-	    count += 1;
+	    this.id = count;count += 1;
 	    this.pos = pos;
+	    this.className = className;
 	    this.hCost = 0;
 	    this.gCost = 0;
-	    this.fCost = function () {
-	      return _this.h + _this.g;
-	    };
-	    this.className = className;
+	    this.open = true;
+	    this.closed = false;
+	    this.fCost = this.fCost.bind(this);
 	    this.addClass = this.addClass.bind(this);
 	    this.removeClass = this.removeClass.bind(this);
 	  }
 	
 	  _createClass(Tile, [{
+	    key: 'fCost',
+	    value: function fCost() {
+	      return this.hCost + this.gCost;
+	    }
+	  }, {
 	    key: 'addClass',
 	    value: function addClass(name) {
 	      this.className += ' ' + name;
@@ -21693,7 +21831,7 @@
 	    value: function removeClass(name) {
 	      var names = this.className.split(' ');
 	      var idx = names.indexOf(name);
-	      this.className = names.splice(idx, 1).join(' ');
+	      this.className = names.splice(idx, 0).join(' ');
 	    }
 	  }]);
 	
@@ -21701,32 +21839,6 @@
 	}();
 	
 	exports.default = Tile;
-
-/***/ },
-/* 176 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var Settings = function Settings() {
-	  return _react2.default.createElement(
-	    'div',
-	    null,
-	    'Settings'
-	  );
-	};
-	
-	exports.default = Settings;
 
 /***/ }
 /******/ ]);
