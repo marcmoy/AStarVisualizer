@@ -1,0 +1,10 @@
+td {
+  height: 10px;
+  width: 10px;
+  outline: 1px solid #eee;
+}
+
+td.start { background-color: green }
+td.end { background-color: red }
+td.empty { background: transparent }
+td.wall { background-color: #ccc }
