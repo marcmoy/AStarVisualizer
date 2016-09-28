@@ -5,12 +5,13 @@ import Maze from '../util/maze';
 class MazeSolver extends React.Component {
   constructor() {
     super();
-    this.state = { maze: new Maze, startPicker: false, endPicker: false };
+    this.state = { maze: new Maze, startPicker: false, endPicker: false, solving: false };
     this.renderGrid = this.renderGrid.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.handleMouseOver = this.handleMouseOver.bind(this);
     this.toggleStartPicker = this.toggleStartPicker.bind(this);
     this.toggleEndPicker = this.toggleEndPicker.bind(this);
+    this.resetMaze = this.resetMaze.bind(this);
   }
 
   renderGrid() {
@@ -56,13 +57,22 @@ class MazeSolver extends React.Component {
     }
   }
 
+  resetMaze(e) {
+    let button = e.target;
+    button.className = 'active';
+    setTimeout(() => {
+      this.setState({ maze: new Maze, startPicker: false, endPicker: false });
+      button.className = '';
+    }, 300);
+  }
+
   handleClick(e) {
     let maze = this.state.maze;
     let pos = e.target.attributes.value.value.split(',').map(i => parseInt(i));
 
     if (this.state.startPicker) {
       maze.setStart(pos);
-    } else if (this.stateEndPicker) {
+    } else if (this.state.endPicker) {
       maze.setEnd(pos);
     } else {
       maze.toggleWall(pos);
@@ -82,7 +92,7 @@ class MazeSolver extends React.Component {
   render() {
     return(
       <div className='container'>
-        <h1 className='title'>Maze Solver Visualizer</h1>
+        <h1 className='title'>Shortest Path Visualizer</h1>
         <h2 className='author'>by Marc Moy</h2>
         <div className='grid'>{this.renderGrid()}</div>
         <Settings
@@ -90,6 +100,7 @@ class MazeSolver extends React.Component {
           toggleEndPicker={this.toggleEndPicker}
           startOn={this.state.startPicker}
           endOn={this.state.endPicker}
+          resetMaze={this.resetMaze}
         />
         <div className='slider'>slider area</div>
       </div>

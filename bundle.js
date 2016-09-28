@@ -21478,6 +21478,7 @@
 	    _this.handleMouseOver = _this.handleMouseOver.bind(_this);
 	    _this.toggleStartPicker = _this.toggleStartPicker.bind(_this);
 	    _this.toggleEndPicker = _this.toggleEndPicker.bind(_this);
+	    _this.resetMaze = _this.resetMaze.bind(_this);
 	    return _this;
 	  }
 	
@@ -21534,6 +21535,18 @@
 	      }
 	    }
 	  }, {
+	    key: 'resetMaze',
+	    value: function resetMaze(e) {
+	      var _this3 = this;
+	
+	      var button = e.target;
+	      button.className = 'active';
+	      setTimeout(function () {
+	        _this3.setState({ maze: new _maze2.default(), startPicker: false, endPicker: false });
+	        button.className = '';
+	      }, 300);
+	    }
+	  }, {
 	    key: 'handleClick',
 	    value: function handleClick(e) {
 	      var maze = this.state.maze;
@@ -21543,7 +21556,7 @@
 	
 	      if (this.state.startPicker) {
 	        maze.setStart(pos);
-	      } else if (this.stateEndPicker) {
+	      } else if (this.state.endPicker) {
 	        maze.setEnd(pos);
 	      } else {
 	        maze.toggleWall(pos);
@@ -21571,7 +21584,7 @@
 	        _react2.default.createElement(
 	          'h1',
 	          { className: 'title' },
-	          'Maze Solver Visualizer'
+	          'Shortest Path Visualizer'
 	        ),
 	        _react2.default.createElement(
 	          'h2',
@@ -21587,7 +21600,8 @@
 	          toggleStartPicker: this.toggleStartPicker,
 	          toggleEndPicker: this.toggleEndPicker,
 	          startOn: this.state.startPicker,
-	          endOn: this.state.endPicker
+	          endOn: this.state.endPicker,
+	          resetMaze: this.resetMaze
 	        }),
 	        _react2.default.createElement(
 	          'div',
@@ -21624,6 +21638,7 @@
 	  var toggleEndPicker = _ref.toggleEndPicker;
 	  var startOn = _ref.startOn;
 	  var endOn = _ref.endOn;
+	  var resetMaze = _ref.resetMaze;
 	
 	  return _react2.default.createElement(
 	    'div',
@@ -21651,6 +21666,15 @@
 	            onClick: toggleEndPicker,
 	            className: endOn ? 'active' : '' },
 	          'Set end node'
+	        )
+	      ),
+	      _react2.default.createElement(
+	        'li',
+	        null,
+	        _react2.default.createElement(
+	          'button',
+	          { onClick: resetMaze },
+	          'Reset Maze'
 	        )
 	      ),
 	      _react2.default.createElement(
@@ -21690,16 +21714,18 @@
 	
 	var Maze = function () {
 	  function Maze() {
-	    var height = arguments.length <= 0 || arguments[0] === undefined ? 30 : arguments[0];
-	    var width = arguments.length <= 1 || arguments[1] === undefined ? 50 : arguments[1];
+	    var height = arguments.length <= 0 || arguments[0] === undefined ? 20 : arguments[0];
+	    var width = arguments.length <= 1 || arguments[1] === undefined ? 40 : arguments[1];
 	
 	    _classCallCheck(this, Maze);
 	
 	    this.startPos = [Math.floor(height / 2), Math.floor(width * (1 / 4))];
 	    this.endPos = [Math.floor(height / 2), Math.floor(width * (3 / 4))];
 	    this.initializeGrid = this.initializeGrid.bind(this);
-	    this.grid = this.initializeGrid(height, width);
+	    this.initializeGrid(height, width);
 	    this.setVal = this.setVal.bind(this);
+	    this.setStart = this.setStart.bind(this);
+	    this.setEnd = this.setEnd.bind(this);
 	    this.toggleWall = this.toggleWall.bind(this);
 	    this.solve = this.solve.bind(this);
 	  }
@@ -21716,17 +21742,9 @@
 	        grid.push(row);
 	      }
 	
-	      var startTile = grid[this.startPos[0]][this.startPos[1]];
-	      startTile.className = 'start';
-	      startTile.open = false;
-	      startTile.closed = true;
-	
-	      var endTile = grid[this.endPos[0]][this.endPos[1]];
-	      endTile.className = 'end';
-	      endTile.open = false;
-	      endTile.closed = true;
-	
-	      return grid;
+	      this.grid = grid;
+	      this.setStart(this.startPos);
+	      this.setEnd(this.endPos);
 	    }
 	  }, {
 	    key: 'setVal',
@@ -21745,6 +21763,24 @@
 	        tile.removeClass('wall');
 	        tile.addClass('empty');
 	      }
+	    }
+	  }, {
+	    key: 'setStart',
+	    value: function setStart(pos) {
+	      if (this.startTile) this.startTile.className = 'empty';
+	      this.startPos = pos;
+	      var startTile = this.grid[this.startPos[0]][this.startPos[1]];
+	      startTile.className = 'start';
+	      this.startTile = startTile;
+	    }
+	  }, {
+	    key: 'setEnd',
+	    value: function setEnd(pos) {
+	      if (this.endTile) this.endTile.className = 'empty';
+	      this.endPos = pos;
+	      var endTile = this.grid[this.endPos[0]][this.endPos[1]];
+	      endTile.className = 'end';
+	      this.endTile = endTile;
 	    }
 	  }, {
 	    key: 'tile',

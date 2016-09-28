@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Settings = ({ toggleStartPicker, toggleEndPicker, startOn, endOn }) => {
+const Settings = ({ toggleStartPicker, toggleEndPicker, startOn, endOn, resetMaze }) => {
   return(
     <div className='settings'>
       <ul>
@@ -18,6 +18,12 @@ const Settings = ({ toggleStartPicker, toggleEndPicker, startOn, endOn }) => {
             onClick={toggleEndPicker}
             className={endOn ? 'active' : ''}>
             Set end node
+          </button>
+        </li>
+
+        <li>
+          <button onClick={resetMaze}>
+            Reset Maze
           </button>
         </li>
 

@@ -1,12 +1,14 @@
 import Tile from './tile';
 
 class Maze {
-  constructor(height = 30, width = 50) {
+  constructor(height = 20, width = 40) {
     this.startPos = [Math.floor(height / 2), Math.floor(width * (1 / 4))];
     this.endPos = [Math.floor(height / 2), Math.floor(width * (3 / 4))];
     this.initializeGrid = this.initializeGrid.bind(this);
-    this.grid = this.initializeGrid(height, width);
+    this.initializeGrid(height, width);
     this.setVal = this.setVal.bind(this);
+    this.setStart = this.setStart.bind(this);
+    this.setEnd = this.setEnd.bind(this);
     this.toggleWall = this.toggleWall.bind(this);
     this.solve = this.solve.bind(this);
   }
@@ -21,17 +23,9 @@ class Maze {
       grid.push(row);
     }
 
-    let startTile = grid[this.startPos[0]][this.startPos[1]];
-    startTile.className = 'start';
-    startTile.open = false;
-    startTile.closed = true;
-
-    let endTile = grid[this.endPos[0]][this.endPos[1]];
-    endTile.className = 'end';
-    endTile.open = false;
-    endTile.closed = true;
-
-    return grid;
+    this.grid = grid;
+    this.setStart(this.startPos);
+    this.setEnd(this.endPos);
   }
 
   setVal(pos, val) {
@@ -48,6 +42,22 @@ class Maze {
       tile.removeClass('wall');
       tile.addClass('empty');
     }
+  }
+
+  setStart(pos) {
+    if (this.startTile) this.startTile.className = 'empty';
+    this.startPos = pos;
+    let startTile = this.grid[this.startPos[0]][this.startPos[1]];
+    startTile.className = 'start';
+    this.startTile = startTile;
+  }
+
+  setEnd(pos) {
+    if (this.endTile) this.endTile.className = 'empty';
+    this.endPos = pos;
+    let endTile = this.grid[this.endPos[0]][this.endPos[1]];
+    endTile.className = 'end';
+    this.endTile = endTile;
   }
 
   tile(pos) {
