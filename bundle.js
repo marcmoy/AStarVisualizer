@@ -21472,13 +21472,16 @@
 	
 	    var _this = _possibleConstructorReturn(this, (MazeSolver.__proto__ || Object.getPrototypeOf(MazeSolver)).call(this));
 	
-	    _this.state = { maze: new _maze2.default(), startPicker: false, endPicker: false };
+	    _this.state = {
+	      maze: new _maze2.default(), startPicker: false, endPicker: false,
+	      solving: false, time: 500 };
 	    _this.renderGrid = _this.renderGrid.bind(_this);
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.handleMouseOver = _this.handleMouseOver.bind(_this);
 	    _this.toggleStartPicker = _this.toggleStartPicker.bind(_this);
 	    _this.toggleEndPicker = _this.toggleEndPicker.bind(_this);
 	    _this.resetMaze = _this.resetMaze.bind(_this);
+	    _this.solve = _this.solve.bind(_this);
 	    return _this;
 	  }
 	
@@ -21576,6 +21579,16 @@
 	      this.setState({ maze: maze });
 	    }
 	  }, {
+	    key: 'solve',
+	    value: function solve() {
+	      var _this4 = this;
+	
+	      var maze = this.state.maze;
+	      maze.solve(function (result) {
+	        _this4.setState({ maze: result });
+	      });
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
@@ -21601,7 +21614,8 @@
 	          toggleEndPicker: this.toggleEndPicker,
 	          startOn: this.state.startPicker,
 	          endOn: this.state.endPicker,
-	          resetMaze: this.resetMaze
+	          resetMaze: this.resetMaze,
+	          solve: this.solve
 	        }),
 	        _react2.default.createElement(
 	          'div',
@@ -21639,6 +21653,7 @@
 	  var startOn = _ref.startOn;
 	  var endOn = _ref.endOn;
 	  var resetMaze = _ref.resetMaze;
+	  var solve = _ref.solve;
 	
 	  return _react2.default.createElement(
 	    'div',
@@ -21682,7 +21697,7 @@
 	        null,
 	        _react2.default.createElement(
 	          'button',
-	          null,
+	          { onClick: solve },
 	          'Solve'
 	        )
 	      )
@@ -21708,6 +21723,10 @@
 	
 	var _tile2 = _interopRequireDefault(_tile);
 	
+	var _solver = __webpack_require__(176);
+	
+	var _solver2 = _interopRequireDefault(_solver);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21723,7 +21742,6 @@
 	    this.endPos = [Math.floor(height / 2), Math.floor(width * (3 / 4))];
 	    this.initializeGrid = this.initializeGrid.bind(this);
 	    this.initializeGrid(height, width);
-	    this.setVal = this.setVal.bind(this);
 	    this.setStart = this.setStart.bind(this);
 	    this.setEnd = this.setEnd.bind(this);
 	    this.toggleWall = this.toggleWall.bind(this);
@@ -21745,11 +21763,6 @@
 	      this.grid = grid;
 	      this.setStart(this.startPos);
 	      this.setEnd(this.endPos);
-	    }
-	  }, {
-	    key: 'setVal',
-	    value: function setVal(pos, val) {
-	      this.grid[pos[0]][pos[1]].className = val;
 	    }
 	  }, {
 	    key: 'toggleWall',
@@ -21783,34 +21796,11 @@
 	      this.endTile = endTile;
 	    }
 	  }, {
-	    key: 'tile',
-	    value: function tile(pos) {
-	      return this.grid[(pos[0], pos[1])];
-	    }
-	  }, {
 	    key: 'solve',
-	    value: function solve() {
-	      this.closed = [this.tile(this.startPos)];
-	      this.open = [];
-	      while (!this.gameover) {
-	        this.step();
-	      }
+	    value: function solve(result) {
+	      var solver = new _solver2.default(this);
+	      solver.solveMaze(result);
 	    }
-	  }, {
-	    key: 'step',
-	    value: function step() {
-	      var _this = this;
-	
-	      var secs = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
-	
-	      var currentTile = this.closed[this.closed.length - 1];
-	      this.openTiles(currentTile, function (finished) {
-	        if (finished) _this.tracePath();
-	      });
-	    }
-	  }, {
-	    key: 'tracePath',
-	    value: function tracePath() {}
 	  }]);
 	
 	  return Maze;
@@ -21835,29 +21825,18 @@
 	var count = 0;
 	
 	var Tile = function () {
-	  function Tile(pos, startPos, endPos) {
-	    var className = arguments.length <= 3 || arguments[3] === undefined ? 'empty' : arguments[3];
+	  function Tile(pos) {
+	    var className = arguments.length <= 1 || arguments[1] === undefined ? 'empty' : arguments[1];
 	
 	    _classCallCheck(this, Tile);
 	
 	    this.id = count;count += 1;
+	    this.open = false;
 	    this.pos = pos;
 	    this.className = className;
-	    this.hCost = 0;
-	    this.gCost = 0;
-	    this.open = true;
-	    this.closed = false;
-	    this.fCost = this.fCost.bind(this);
-	    this.addClass = this.addClass.bind(this);
-	    this.removeClass = this.removeClass.bind(this);
 	  }
 	
 	  _createClass(Tile, [{
-	    key: 'fCost',
-	    value: function fCost() {
-	      return this.hCost + this.gCost;
-	    }
-	  }, {
 	    key: 'addClass',
 	    value: function addClass(name) {
 	      this.className += ' ' + name;
@@ -21869,12 +21848,142 @@
 	      var idx = names.indexOf(name);
 	      this.className = names.splice(idx, 0).join(' ');
 	    }
+	  }, {
+	    key: 'explore',
+	    value: function explore(parent, endPos) {
+	      if (!this.open) {
+	        this.gCost = dist(parent.pos, this.pos);
+	        this.hCost = dist(endPos, this.pos);
+	        this.parent = parent;
+	        this.open = true;
+	        this.addClass('open');
+	      } else {
+	        var gCost = dist(parent.pos, this.pos);
+	        if (gCost < this.gCost) {
+	          this.gCost = gCost;
+	          this.parent = parent;
+	        }
+	      }
+	    }
+	  }, {
+	    key: 'fCost',
+	    value: function fCost() {
+	      return this.gCost + this.hCost;
+	    }
 	  }]);
 	
 	  return Tile;
 	}();
 	
+	var dist = function dist(pos1, pos2) {
+	  var x1 = pos1[0];
+	  var x2 = pos2[0];
+	  var y1 = pos1[1];
+	  var y2 = pos2[1];
+	  var xDiff = Math.abs(x1 - x2);
+	  var yDiff = Math.abs(y1 - y2);
+	  var maxDiff = Math.min(xDiff, yDiff);
+	  var minDiff = Math.abs(xDiff - yDiff);
+	  return maxDiff * 14 + minDiff * 10;
+	};
+	
 	exports.default = Tile;
+
+/***/ },
+/* 176 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Solver = function () {
+	  function Solver(maze) {
+	    _classCallCheck(this, Solver);
+	
+	    this.maze = maze;
+	    this.grid = this.maze.grid;
+	    this.solved = false;
+	    this.closedList = [maze.startTile];
+	    this.openList = [];
+	  }
+	
+	  _createClass(Solver, [{
+	    key: 'solveMaze',
+	    value: function solveMaze(result) {
+	      var _this = this;
+	
+	      if (this.interval) clearInterval(this.inverval);
+	      this.interval = window.setInterval(function () {
+	        _this.step(result);
+	      }, 200);
+	    }
+	  }, {
+	    key: 'step',
+	    value: function step(result) {
+	      console.log('step');
+	      var DELTAS = [[-1, -1], [-1, 0], [-1, -1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+	      var parentTile = this.closedList[this.closedList.length - 1];
+	      var parentPos = parentTile.pos;
+	      for (var i = 0; i < DELTAS.length; i++) {
+	        var delta = DELTAS[i];
+	        var tile = this.grid[parentPos[0] + delta[0]][parentPos[1] + delta[1]];
+	        if (tile) {
+	          if (tile.className === 'empty') {
+	            tile.explore(parentTile, this.maze.endPos);
+	            this.openList.push(tile);
+	          } else if (tile.className === 'end') {
+	            this.solved = true;
+	            this.openList.push(tile);
+	            clearInterval(this.interval);
+	            this.tracePath(tile);
+	            return;
+	          }
+	        }
+	      }
+	      this.openNextNode(result);
+	    }
+	  }, {
+	    key: 'openNextNode',
+	    value: function openNextNode(result) {
+	      var idx = 0;
+	      var minNode = this.openList[0];
+	      var minFCost = minNode.fCost();
+	      for (var i = 1; i < this.openList.length; i++) {
+	        var node = this.openList[i];
+	        if (node.fCost() < minFCost) {
+	          minNode = node;
+	          minFCost = node.fCost();
+	          idx = i;
+	        }
+	      }
+	      minNode.removeClass('open');
+	      minNode.addClass('closed');
+	      this.closedList.push(minNode);
+	      this.openList.splice(idx, 1);
+	      result(this);
+	    }
+	  }, {
+	    key: 'tracePath',
+	    value: function tracePath(tile) {
+	      if (tile.parent) {
+	        if (tile.parent.className === 'start') ;
+	        if (tile.className !== 'end') tile.addClass('path');
+	        this.tracePath(tile.parent);
+	      }
+	    }
+	  }]);
+	
+	  return Solver;
+	}();
+	
+	exports.default = Solver;
 
 /***/ }
 /******/ ]);

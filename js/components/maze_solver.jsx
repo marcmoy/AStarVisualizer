@@ -5,13 +5,16 @@ import Maze from '../util/maze';
 class MazeSolver extends React.Component {
   constructor() {
     super();
-    this.state = { maze: new Maze, startPicker: false, endPicker: false, solving: false };
+    this.state = {
+      maze: new Maze, startPicker: false, endPicker: false,
+      solving: false, time: 500 };
     this.renderGrid = this.renderGrid.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.handleMouseOver = this.handleMouseOver.bind(this);
     this.toggleStartPicker = this.toggleStartPicker.bind(this);
     this.toggleEndPicker = this.toggleEndPicker.bind(this);
     this.resetMaze = this.resetMaze.bind(this);
+    this.solve = this.solve.bind(this);
   }
 
   renderGrid() {
@@ -89,6 +92,13 @@ class MazeSolver extends React.Component {
     this.setState({ maze: maze });
   }
 
+  solve() {
+    let maze = this.state.maze;
+    maze.solve((result) => {
+      this.setState({ maze: result });
+    });
+  }
+
   render() {
     return(
       <div className='container'>
@@ -101,6 +111,7 @@ class MazeSolver extends React.Component {
           startOn={this.state.startPicker}
           endOn={this.state.endPicker}
           resetMaze={this.resetMaze}
+          solve={this.solve}
         />
         <div className='slider'>slider area</div>
       </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Settings = ({ toggleStartPicker, toggleEndPicker, startOn, endOn, resetMaze }) => {
+const Settings = ({ toggleStartPicker, toggleEndPicker, startOn, endOn, resetMaze, solve }) => {
   return(
     <div className='settings'>
       <ul>
@@ -28,7 +28,7 @@ const Settings = ({ toggleStartPicker, toggleEndPicker, startOn, endOn, resetMaz
         </li>
 
         <li>
-          <button>
+          <button onClick={solve}>
             Solve
           </button>
         </li>

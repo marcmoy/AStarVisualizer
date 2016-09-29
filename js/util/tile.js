@@ -1,21 +1,11 @@
 var count = 0;
 
 class Tile {
-  constructor(pos, startPos, endPos, className = 'empty') {
+  constructor(pos, className = 'empty') {
     this.id = count; count += 1;
+    this.open = false;
     this.pos = pos;
     this.className = className;
-    this.hCost = 0;
-    this.gCost = 0;
-    this.open = true;
-    this.closed = false;
-    this.fCost = this.fCost.bind(this);
-    this.addClass = this.addClass.bind(this);
-    this.removeClass = this.removeClass.bind(this);
-  }
-
-  fCost() {
-    return this.hCost + this.gCost;
   }
 
   addClass(name) {
@@ -27,6 +17,38 @@ class Tile {
     let idx = names.indexOf(name);
     this.className = names.splice(idx, 0).join(' ');
   }
+
+  explore(parent, endPos) {
+    if (!this.open) {
+      this.gCost = dist(parent.pos, this.pos);
+      this.hCost = dist(endPos, this.pos);
+      this.parent = parent;
+      this.open = true;
+      this.addClass('open');
+    } else {
+      let gCost = dist(parent.pos, this.pos);
+      if (gCost < this.gCost) {
+        this.gCost = gCost;
+        this.parent = parent;
+      }
+    }
+  }
+
+  fCost() {
+    return this.gCost + this.hCost;
+  }
 }
+
+const dist = (pos1, pos2) => {
+  let x1 = pos1[0];
+  let x2 = pos2[0];
+  let y1 = pos1[1];
+  let y2 = pos2[1];
+  let xDiff = Math.abs(x1 - x2);
+  let yDiff = Math.abs(y1 - y2);
+  let maxDiff = Math.min(xDiff, yDiff);
+  let minDiff = Math.abs(xDiff - yDiff);
+  return maxDiff * 14 + minDiff * 10;
+};
 
 export default Tile;

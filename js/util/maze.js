@@ -1,4 +1,5 @@
 import Tile from './tile';
+import Solver from './solver';
 
 class Maze {
   constructor(height = 20, width = 40) {
@@ -6,7 +7,6 @@ class Maze {
     this.endPos = [Math.floor(height / 2), Math.floor(width * (3 / 4))];
     this.initializeGrid = this.initializeGrid.bind(this);
     this.initializeGrid(height, width);
-    this.setVal = this.setVal.bind(this);
     this.setStart = this.setStart.bind(this);
     this.setEnd = this.setEnd.bind(this);
     this.toggleWall = this.toggleWall.bind(this);
@@ -26,10 +26,6 @@ class Maze {
     this.grid = grid;
     this.setStart(this.startPos);
     this.setEnd(this.endPos);
-  }
-
-  setVal(pos, val) {
-    this.grid[pos[0]][pos[1]].className = val;
   }
 
   toggleWall(pos) {
@@ -60,27 +56,9 @@ class Maze {
     this.endTile = endTile;
   }
 
-  tile(pos) {
-    return this.grid[pos[0],pos[1]];
-  }
-
-  solve() {
-    this.closed = [this.tile(this.startPos)];
-    this.open = [];
-    while (!this.gameover) {
-      this.step();
-    }
-  }
-
-  step(secs = 0) {
-    let currentTile = this.closed[this.closed.length - 1];
-    this.openTiles(currentTile, finished => {
-      if (finished) this.tracePath();
-    });
-  }
-
-  tracePath() {
-
+  solve(result) {
+    let solver = new Solver(this);
+    solver.solveMaze(result);
   }
 }
 

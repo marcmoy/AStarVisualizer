@@ -8,10 +8,6 @@ html {
   height: 100%;
 }
 
-div.container {
-
-}
-
 h1.title {
   margin: 30px 50px;
   color: #557dce;
@@ -20,7 +16,7 @@ h1.title {
 }
 
 h2.author {
-  font-size: 18px;
+  font-size: 20px;
   margin: -20px 0px 20px 80px;
   text-decoration: italicize;
 }
@@ -41,6 +37,10 @@ td.start { background-color: green }
 td.end { background-color: red }
 td.empty { background: white }
 td.wall { background-color: #ccc }
+
+td.closed { background-color: blue }
+td.open { background-color: orange }
+td.path { background-color: purple }
 
 .settings {
   float: left;
