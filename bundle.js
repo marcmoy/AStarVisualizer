@@ -54,15 +54,15 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _maze_solver = __webpack_require__(172);
+	var _app = __webpack_require__(172);
 	
-	var _maze_solver2 = _interopRequireDefault(_maze_solver);
+	var _app2 = _interopRequireDefault(_app);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	document.addEventListener('DOMContentLoaded', function () {
 	  var root = document.getElementById('root');
-	  _reactDom2.default.render(_react2.default.createElement(_maze_solver2.default, null), root);
+	  _reactDom2.default.render(_react2.default.createElement(_app2.default, null), root);
 	});
 
 /***/ },
@@ -21454,8 +21454,6 @@
 	
 	var _maze = __webpack_require__(174);
 	
-	var _maze2 = _interopRequireDefault(_maze);
-	
 	var _jquery = __webpack_require__(179);
 	
 	var _jquery2 = _interopRequireDefault(_jquery);
@@ -21468,149 +21466,143 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var MazeSolver = function (_React$Component) {
-	  _inherits(MazeSolver, _React$Component);
+	var App = function (_React$Component) {
+	  _inherits(App, _React$Component);
 	
-	  function MazeSolver() {
-	    _classCallCheck(this, MazeSolver);
+	  function App() {
+	    _classCallCheck(this, App);
 	
-	    var _this = _possibleConstructorReturn(this, (MazeSolver.__proto__ || Object.getPrototypeOf(MazeSolver)).call(this));
+	    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
 	
-	    _this.state = {
-	      maze: new _maze2.default(), startPicker: false, endPicker: false,
-	      solving: false, time: 500 };
-	    _this.renderGrid = _this.renderGrid.bind(_this);
-	    _this.handleClick = _this.handleClick.bind(_this);
+	    _this.state = { startDrag: false, endDrag: false, wallDrag: false };
+	    _this.setUp = _this.setUp.bind(_this);
+	    _this.clearWalls = _this.clearWalls.bind(_this);
+	    _this.handleMouseDown = _this.handleMouseDown.bind(_this);
 	    _this.handleMouseOver = _this.handleMouseOver.bind(_this);
-	    _this.toggleStartPicker = _this.toggleStartPicker.bind(_this);
-	    _this.toggleEndPicker = _this.toggleEndPicker.bind(_this);
-	    _this.resetMaze = _this.resetMaze.bind(_this);
-	    _this.solve = _this.solve.bind(_this);
 	    return _this;
 	  }
 	
-	  _createClass(MazeSolver, [{
+	  _createClass(App, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      this.setUp();
+	    }
+	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
 	      var _this2 = this;
 	
-	      (0, _jquery2.default)('body').mousedown(function () {
-	        _this2.mousedown = true;
-	      });
-	      (0, _jquery2.default)('body').mouseup(function () {
-	        _this2.mousedown = false;
+	      (0, _jquery2.default)(document).mouseup(function () {
+	        _this2.setState({ startDrag: false, endDrag: false, wallDrag: false });
 	      });
 	    }
 	  }, {
-	    key: 'renderGrid',
-	    value: function renderGrid() {
-	      var _this3 = this;
-	
-	      var grid = this.state.maze.grid.map(function (row, i) {
-	
-	        var tiles = row.map(function (tile, j) {
-	          var pos = tile.pos;
-	          return _react2.default.createElement('td', {
-	            className: tile.className,
-	            value: pos,
-	            key: pos,
-	            onMouseDown: _this3.handleClick,
-	            onMouseOver: _this3.handleMouseOver });
+	    key: 'setUp',
+	    value: function setUp() {
+	      var grid = (0, _maze.initialGrid)();
+	      var height = grid.length;
+	      var width = grid[0].length;
+	      var startPos = [Math.floor(height * 0.5), Math.floor(width * (1 / 10))];
+	      var endPos = [Math.floor(height * 0.5), Math.floor(width * (9 / 10))];
+	      grid[startPos[0]][startPos[1]].className = 'start';
+	      grid[endPos[0]][endPos[1]].className = 'end';
+	      this.setState({ grid: grid, startPos: startPos, endPos: endPos });
+	    }
+	  }, {
+	    key: 'clearWalls',
+	    value: function clearWalls() {
+	      var clearedGrid = this.state.grid.map(function (row) {
+	        return row.map(function (node) {
+	          var name = node.className;
+	          node.className = name === 'wall' ? 'empty' : name;
+	          return node;
 	        });
-	
-	        return _react2.default.createElement(
-	          'tr',
-	          { key: i },
-	          tiles
-	        );
 	      });
-	
-	      return _react2.default.createElement(
-	        'table',
-	        null,
-	        _react2.default.createElement(
-	          'tbody',
-	          null,
-	          grid
-	        )
-	      );
+	      this.setState({ grid: clearedGrid });
 	    }
 	  }, {
-	    key: 'toggleStartPicker',
-	    value: function toggleStartPicker() {
-	      if (this.state.startPicker) {
-	        this.setState({ startPicker: false });
-	      } else {
-	        this.setState({ startPicker: true, endPicker: false });
+	    key: 'solve',
+	    value: function solve() {}
+	  }, {
+	    key: 'handleMouseDown',
+	    value: function handleMouseDown(e) {
+	      e.preventDefault();
+	      var type = e.target.className;
+	      var grid = this.state.grid;
+	      switch (type) {
+	        case 'start':
+	          return this.setState({ startDrag: true, endDrag: false });
+	        case 'end':
+	          return this.setState({ startDrag: false, endDrag: true });
+	        case 'empty':
+	          var emptyPos = this.grabPos(e);
+	          grid[emptyPos[0]][emptyPos[1]].className = 'wall';
+	          return this.setState({ grid: grid, wallDrag: true });
+	        case 'wall':
+	          var wallPos = this.grabPos(e);
+	          grid[wallPos[0]][wallPos[1]].className = 'empty';
+	          return this.setState({ grid: grid });
+	        default:
+	          return;
 	      }
 	    }
 	  }, {
-	    key: 'toggleEndPicker',
-	    value: function toggleEndPicker() {
-	      if (this.state.endPicker) {
-	        this.setState({ endPicker: false });
-	      } else {
-	        this.setState({ endPicker: true, startPicker: false });
-	      }
-	    }
-	  }, {
-	    key: 'resetMaze',
-	    value: function resetMaze(e) {
-	      var _this4 = this;
-	
-	      var button = e.target;
-	      button.className = 'active';
-	      setTimeout(function () {
-	        _this4.setState({ maze: new _maze2.default(), startPicker: false, endPicker: false });
-	        button.className = '';
-	      }, 300);
-	    }
-	  }, {
-	    key: 'handleClick',
-	    value: function handleClick(e) {
-	      var maze = this.state.maze;
-	      var pos = e.target.attributes.value.value.split(',').map(function (i) {
+	    key: 'grabPos',
+	    value: function grabPos(e) {
+	      return e.target.attributes.value.value.split(',').map(function (i) {
 	        return parseInt(i);
 	      });
-	
-	      if (this.state.startPicker) {
-	        maze.setStart(pos);
-	      } else if (this.state.endPicker) {
-	        maze.setEnd(pos);
-	      } else {
-	        maze.toggleWall(pos);
-	      }
-	
-	      this.setState({ maze: maze });
 	    }
 	  }, {
 	    key: 'handleMouseOver',
 	    value: function handleMouseOver(e) {
 	      e.preventDefault();
-	      var maze = this.state.maze;
-	      var pos = e.target.attributes.value.value.split(',').map(function (i) {
-	        return parseInt(i);
-	      });
-	      if (this.state.startPicker || this.state.endPicker) return;
-	      if (this.mousedown) maze.toggleWall(pos);
-	      this.setState({ maze: maze });
-	    }
-	  }, {
-	    key: 'solve',
-	    value: function solve() {
-	      var _this5 = this;
+	      var pos = this.grabPos(e);
+	      var grid = this.state.grid;
+	      var node = grid[pos[0]][pos[1]];
 	
-	      var maze = this.state.maze;
-	      maze.solve(function (result) {
-	        _this5.setState({ maze: result, startPicker: false, endPicker: false });
-	      });
+	      if (this.state.startDrag) {
+	        var startPos = this.state.startPos;
+	        grid[startPos[0]][startPos[1]].className = 'empty';
+	        node.className = 'start';
+	        return this.setState({ grid: grid, startPos: pos });
+	      } else if (this.state.endDrag) {
+	        var endPos = this.state.endPos;
+	        grid[endPos[0]][endPos[1]].className = 'empty';
+	        node.className = 'end';
+	        return this.setState({ grid: grid, endPos: pos });
+	      } else if (this.state.wallDrag) {
+	        if (node.className === 'start' || node.className === 'end') return;
+	        node.className = 'wall';
+	        return this.setState({ grid: grid });
+	      }
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var grid = this.state.grid;
+	      var table = [];
+	      for (var i = 0; i < grid.length; i++) {
+	        var nodes = [];
+	        for (var j = 0; j < grid[i].length; j++) {
+	          var node = grid[i][j];
+	          nodes.push(_react2.default.createElement('td', {
+	            className: node.className,
+	            value: node.pos, key: node.pos,
+	            onMouseDown: this.handleMouseDown,
+	            onMouseOver: this.handleMouseOver
+	          }));
+	        }
+	        table.push(_react2.default.createElement(
+	          'tr',
+	          { key: i },
+	          nodes
+	        ));
+	      }
+	
 	      return _react2.default.createElement(
 	        'div',
-	        { className: 'container' },
+	        null,
 	        _react2.default.createElement(
 	          'h1',
 	          { className: 'title' },
@@ -21624,24 +21616,29 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'grid' },
-	          this.renderGrid()
+	          _react2.default.createElement(
+	            'table',
+	            null,
+	            _react2.default.createElement(
+	              'tbody',
+	              null,
+	              table
+	            )
+	          )
 	        ),
 	        _react2.default.createElement(_settings2.default, {
-	          toggleStartPicker: this.toggleStartPicker,
-	          toggleEndPicker: this.toggleEndPicker,
-	          startOn: this.state.startPicker,
-	          endOn: this.state.endPicker,
-	          resetMaze: this.resetMaze,
+	          resetGrid: this.setUp,
+	          clearWalls: this.clearWalls,
 	          solve: this.solve
 	        })
 	      );
 	    }
 	  }]);
 	
-	  return MazeSolver;
+	  return App;
 	}(_react2.default.Component);
 	
-	exports.default = MazeSolver;
+	exports.default = App;
 
 /***/ },
 /* 173 */
@@ -21660,11 +21657,8 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var Settings = function Settings(_ref) {
-	  var toggleStartPicker = _ref.toggleStartPicker;
-	  var toggleEndPicker = _ref.toggleEndPicker;
-	  var startOn = _ref.startOn;
-	  var endOn = _ref.endOn;
-	  var resetMaze = _ref.resetMaze;
+	  var resetGrid = _ref.resetGrid;
+	  var clearWalls = _ref.clearWalls;
 	  var solve = _ref.solve;
 	
 	  return _react2.default.createElement(
@@ -21678,10 +21672,8 @@
 	        null,
 	        _react2.default.createElement(
 	          'button',
-	          {
-	            onClick: toggleStartPicker,
-	            className: startOn ? 'active' : '' },
-	          'Set start node'
+	          { onClick: resetGrid },
+	          ' Reset grid '
 	        )
 	      ),
 	      _react2.default.createElement(
@@ -21689,19 +21681,8 @@
 	        null,
 	        _react2.default.createElement(
 	          'button',
-	          {
-	            onClick: toggleEndPicker,
-	            className: endOn ? 'active' : '' },
-	          'Set end node'
-	        )
-	      ),
-	      _react2.default.createElement(
-	        'li',
-	        null,
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: resetMaze },
-	          'Reset Maze'
+	          { onClick: clearWalls },
+	          ' Clear walls '
 	        )
 	      ),
 	      _react2.default.createElement(
@@ -21710,7 +21691,7 @@
 	        _react2.default.createElement(
 	          'button',
 	          { onClick: solve },
-	          'Solve'
+	          ' Solve '
 	        )
 	      )
 	    )
@@ -21728,6 +21709,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.initialGrid = undefined;
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
@@ -21742,6 +21724,22 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var initialGrid = exports.initialGrid = function initialGrid() {
+	  var height = arguments.length <= 0 || arguments[0] === undefined ? 20 : arguments[0];
+	  var width = arguments.length <= 1 || arguments[1] === undefined ? 40 : arguments[1];
+	
+	  var grid = [];
+	  for (var i = 0; i < height; i++) {
+	    var row = [];
+	    for (var j = 0; j < width; j++) {
+	      var node = { className: 'empty', pos: [i, j] };
+	      row.push(node);
+	    }
+	    grid.push(row);
+	  }
+	  return grid;
+	};
 	
 	var Maze = function () {
 	  function Maze() {

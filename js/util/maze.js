@@ -1,6 +1,19 @@
 import Tile from './tile';
 import Solver from './solver';
 
+export const initialGrid = (height = 20, width = 40) => {
+  let grid = [];
+  for (let i = 0; i < height; i++) {
+    let row = [];
+    for (let j = 0; j < width; j++) {
+      let node = { className: 'empty', pos: [i,j] };
+      row.push(node);
+    }
+    grid.push(row);
+  }
+  return grid;
+};
+
 class Maze {
   constructor(height = 20, width = 40) {
     this.startPos = [Math.floor(height * (9/10)), Math.floor(width * (1/12))];

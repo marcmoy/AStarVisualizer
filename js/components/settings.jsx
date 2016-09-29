@@ -1,38 +1,12 @@
 import React from 'react';
 
-const Settings = ({ toggleStartPicker, toggleEndPicker, startOn, endOn, resetMaze, solve }) => {
+const Settings = ({ resetGrid, clearWalls, solve }) => {
   return(
     <div className='settings'>
       <ul>
-
-        <li>
-          <button
-            onClick={toggleStartPicker}
-            className={startOn ? 'active' : ''}>
-            Set start node
-          </button>
-        </li>
-
-        <li>
-          <button
-            onClick={toggleEndPicker}
-            className={endOn ? 'active' : ''}>
-            Set end node
-          </button>
-        </li>
-
-        <li>
-          <button onClick={resetMaze}>
-            Reset Maze
-          </button>
-        </li>
-
-        <li>
-          <button onClick={solve}>
-            Solve
-          </button>
-        </li>
-
+        <li><button onClick={resetGrid}> Reset grid </button></li>
+        <li><button onClick={clearWalls}> Clear walls </button></li>
+        <li><button onClick={solve}> Solve </button></li>
       </ul>
     </div>
   );

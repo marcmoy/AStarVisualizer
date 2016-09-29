@@ -41,10 +41,28 @@ td.start { background-color: green }
 td.end { background-color: red }
 td.empty { background: white }
 td.wall { background-color: #827676 }
-
 td.closed { background-color: #f3786f }
 td.open { background-color: #3af33a }
 td.path { background-color: #557dce }
+
+td.wall {
+  -webkit-animation: insertTile 0.3s normal; /* Safari 4+ */
+  -moz-animation:    insertTile 0.3s normal; /* Fx 5+ */
+  -o-animation:      insertTile 0.3s normal; /* Opera 12+ */
+  animation:         insertTile 0.3s normal;
+}
+
+/* Chrome, Safari, Opera */
+@-webkit-keyframes insertTile {
+  from {opacity: 0}
+  to {opacity: 1}
+}
+
+/* Standard syntax */
+@keyframes insertTile {
+  from {opacity: 0}
+  to {opacity: 1}
+}
 
 .settings {
   float: left;
@@ -83,7 +101,7 @@ button:focus {
   outline: 0;
 }
 
-button.active {
+button:active {
   box-shadow: 0 2px #27496d;
   background: #3cb0fd;
   transform: translateY(2px);
