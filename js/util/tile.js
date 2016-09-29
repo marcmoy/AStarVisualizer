@@ -5,13 +5,16 @@ class Tile {
     this.id = count; count += 1;
     this.gCost = 0;
     this.hCost = 0;
+    this.fCost = 0;
     this.open = false;
     this.pos = pos;
     this.className = className;
   }
 
   addClass(name) {
-    this.className += ` ${name}`;
+    let names = this.className.split(' ');
+    names.push(`${name}`);
+    this.className = names.join(' ');
   }
 
   removeClass(name) {
@@ -24,6 +27,7 @@ class Tile {
     if (!this.open) {
       this.gCost = dist(parent.pos, this.pos) + parent.gCost;
       this.hCost = dist(endPos, this.pos);
+      this.fCost = this.gCost + this.hCost;
       this.parent = parent;
       this.open = true;
       this.addClass('open');
@@ -31,13 +35,10 @@ class Tile {
       let gCost = dist(parent.pos, this.pos) + parent.gCost;
       if (gCost < this.gCost) {
         this.gCost = gCost;
+        this.fCost = this.gCost + this.hCost;
         this.parent = parent;
       }
     }
-  }
-
-  fCost() {
-    return this.gCost + this.hCost;
   }
 }
 

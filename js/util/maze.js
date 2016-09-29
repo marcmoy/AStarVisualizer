@@ -3,8 +3,8 @@ import Solver from './solver';
 
 class Maze {
   constructor(height = 20, width = 40) {
-    this.startPos = [Math.floor(height / 2), Math.floor(width * (1 / 4))];
-    this.endPos = [Math.floor(height / 2), Math.floor(width * (3 / 4))];
+    this.startPos = [Math.floor(height * (9/10)), Math.floor(width * (1/12))];
+    this.endPos = [Math.floor(height*(1/10)), Math.floor(width * (11/12))];
     this.initializeGrid = this.initializeGrid.bind(this);
     this.initializeGrid(height, width);
     this.setStart = this.setStart.bind(this);
@@ -31,7 +31,6 @@ class Maze {
 
   toggleWall(pos) {
     let tile = this.grid[pos[0]][pos[1]];
-    // check if tile is empty before adding wall
     if (tile.className.includes('empty')) {
       tile.removeClass('empty');
       tile.addClass('wall');
@@ -63,7 +62,6 @@ class Maze {
   }
 
   tracePath(tile, result) {
-    debugger;
     if (tile.className === 'start') return;
     if (tile.className !== 'end') tile.className = 'path';
     result(this);

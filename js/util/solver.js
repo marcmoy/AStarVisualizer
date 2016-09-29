@@ -52,28 +52,27 @@ class Solver {
   }
 
   lowestFCost() {
-    let minFCost = this.openList[0].fCost();
+    let minFCost = this.openList[0].fCost;
     for (let i = 1; i < this.openList.length; i++) {
       let node = this.openList[i];
-      if (node.fCost() < minFCost) minFCost = node.fCost();
+      if (node.fCost < minFCost) minFCost = node.fCost;
     }
 
     let minNodes = this.openList.filter(node => {
-      return node.fCost() === minFCost;
+      return node.fCost === minFCost;
     });
 
-    let minHCost = minNodes[0].hCost;
-
-    for (let i = 1; i < minNodes.length; i++) {
-      let node = minNodes[i];
-      if (node.hCost < minHCost) minHCost = node.hCost;
-    }
-
-    let selectNodes = minNodes.filter(node => {
-      return node.hCost === minHCost;
+    minNodes.sort((a,b) => {
+      if (a.fCost > b.fCost) {
+        return -1;
+      }
+      if (a.fCost < b.fCost) {
+        return 1;
+      }
+      return 0;
     });
 
-    return selectNodes[selectNodes.length - 1];
+    return minNodes[0];
   }
 
   tracePath(tile, result) {

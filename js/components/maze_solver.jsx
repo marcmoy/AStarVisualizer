@@ -1,6 +1,7 @@
 import React from 'react';
 import Settings from './settings';
 import Maze from '../util/maze';
+import $ from 'jquery';
 
 class MazeSolver extends React.Component {
   constructor() {
@@ -15,6 +16,15 @@ class MazeSolver extends React.Component {
     this.toggleEndPicker = this.toggleEndPicker.bind(this);
     this.resetMaze = this.resetMaze.bind(this);
     this.solve = this.solve.bind(this);
+  }
+
+  componentDidMount() {
+    $('body').mousedown(() => {
+      this.mousedown = true;
+    });
+    $('body').mouseup(() => {
+      this.mousedown = false;
+    });
   }
 
   renderGrid() {
@@ -85,10 +95,11 @@ class MazeSolver extends React.Component {
   }
 
   handleMouseOver(e) {
+    e.preventDefault();
     let maze = this.state.maze;
     let pos = e.target.attributes.value.value.split(',').map(i => parseInt(i));
     if (this.state.startPicker || this.state.endPicker) return;
-    if (e.buttons) maze.toggleWall(pos);
+    if (this.mousedown) maze.toggleWall(pos);
     this.setState({ maze: maze });
   }
 

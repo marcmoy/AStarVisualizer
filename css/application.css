@@ -26,11 +26,15 @@ h2.author {
   margin-left: 30px;
 }
 
+table {
+  border-spacing: 0;
+}
+
 td {
   height: 15px;
   width: 15px;
-  outline: 1px solid #eee;
   cursor: pointer;
+  outline: 1px solid #eee;
 }
 
 td.start { background-color: green }
