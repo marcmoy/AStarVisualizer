@@ -5,8 +5,7 @@ class Solver {
     this.maze = maze;
     this.grid = this.maze.grid;
     this.solved = false;
-    this.closedList = [maze.startTile];
-    this.openList = [];
+    this.openList = [maze.startTile];
   }
 
   solveMaze(result) {
@@ -17,10 +16,18 @@ class Solver {
   }
 
   step(result) {
-    console.log('step');
-    const DELTAS = [[-1,-1],[-1,0],[-1,-1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
-    let parentTile = this.closedList[this.closedList.length - 1];
+    const DELTAS = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+    let parentTile = this.lowestFCost();
     let parentPos = parentTile.pos;
+
+    let idx = this.openList.indexOf(parentTile);
+    this.openList.splice(idx, 1);
+
+    if (parentTile.className !== 'start') {
+      parentTile.removeClass('open');
+      parentTile.addClass('closed');
+    }
+
     for (let i = 0; i < DELTAS.length; i++) {
       let delta = DELTAS[i];
       let tile;
@@ -40,10 +47,11 @@ class Solver {
         }
       }
     }
-    this.openNextNode(result);
+
+    result(this);
   }
 
-  openNextNode(result) {
+  lowestFCost() {
     let minFCost = this.openList[0].fCost();
     for (let i = 1; i < this.openList.length; i++) {
       let node = this.openList[i];
@@ -65,13 +73,7 @@ class Solver {
       return node.hCost === minHCost;
     });
 
-    let minNode = selectNodes[0];
-    let idx = this.openList.indexOf(minNode);
-    minNode.removeClass('open');
-    minNode.addClass('closed');
-    this.closedList.push(minNode);
-    this.openList.splice(idx, 1);
-    result(this);
+    return selectNodes[selectNodes.length - 1];
   }
 
   tracePath(tile, result) {

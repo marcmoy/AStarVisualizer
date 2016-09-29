@@ -4,6 +4,7 @@ class Tile {
   constructor(pos, className = 'empty') {
     this.id = count; count += 1;
     this.gCost = 0;
+    this.hCost = 0;
     this.open = false;
     this.pos = pos;
     this.className = className;
@@ -27,7 +28,7 @@ class Tile {
       this.open = true;
       this.addClass('open');
     } else {
-      let gCost = dist(parent.pos, this.pos);
+      let gCost = dist(parent.pos, this.pos) + parent.gCost;
       if (gCost < this.gCost) {
         this.gCost = gCost;
         this.parent = parent;

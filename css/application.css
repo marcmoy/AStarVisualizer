@@ -36,11 +36,11 @@ td {
 td.start { background-color: green }
 td.end { background-color: red }
 td.empty { background: white }
-td.wall { background-color: #ccc }
+td.wall { background-color: #827676 }
 
-td.closed { background-color: blue }
-td.open { background-color: orange }
-td.path { background-color: purple }
+td.closed { background-color: #f3786f }
+td.open { background-color: #3af33a }
+td.path { background-color: #557dce }
 
 .settings {
   float: left;

@@ -21837,6 +21837,7 @@
 	
 	    this.id = count;count += 1;
 	    this.gCost = 0;
+	    this.hCost = 0;
 	    this.open = false;
 	    this.pos = pos;
 	    this.className = className;
@@ -21864,7 +21865,7 @@
 	        this.open = true;
 	        this.addClass('open');
 	      } else {
-	        var gCost = dist(parent.pos, this.pos);
+	        var gCost = dist(parent.pos, this.pos) + parent.gCost;
 	        if (gCost < this.gCost) {
 	          this.gCost = gCost;
 	          this.parent = parent;
@@ -21922,8 +21923,7 @@
 	    this.maze = maze;
 	    this.grid = this.maze.grid;
 	    this.solved = false;
-	    this.closedList = [maze.startTile];
-	    this.openList = [];
+	    this.openList = [maze.startTile];
 	  }
 	
 	  _createClass(Solver, [{
@@ -21939,10 +21939,18 @@
 	  }, {
 	    key: 'step',
 	    value: function step(result) {
-	      console.log('step');
-	      var DELTAS = [[-1, -1], [-1, 0], [-1, -1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
-	      var parentTile = this.closedList[this.closedList.length - 1];
+	      var DELTAS = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+	      var parentTile = this.lowestFCost();
 	      var parentPos = parentTile.pos;
+	
+	      var idx = this.openList.indexOf(parentTile);
+	      this.openList.splice(idx, 1);
+	
+	      if (parentTile.className !== 'start') {
+	        parentTile.removeClass('open');
+	        parentTile.addClass('closed');
+	      }
+	
 	      for (var i = 0; i < DELTAS.length; i++) {
 	        var delta = DELTAS[i];
 	        var tile = void 0;
@@ -21962,11 +21970,12 @@
 	          }
 	        }
 	      }
-	      this.openNextNode(result);
+	
+	      result(this);
 	    }
 	  }, {
-	    key: 'openNextNode',
-	    value: function openNextNode(result) {
+	    key: 'lowestFCost',
+	    value: function lowestFCost() {
 	      var minFCost = this.openList[0].fCost();
 	      for (var i = 1; i < this.openList.length; i++) {
 	        var node = this.openList[i];
@@ -21988,13 +21997,7 @@
 	        return node.hCost === minHCost;
 	      });
 	
-	      var minNode = selectNodes[0];
-	      var idx = this.openList.indexOf(minNode);
-	      minNode.removeClass('open');
-	      minNode.addClass('closed');
-	      this.closedList.push(minNode);
-	      this.openList.splice(idx, 1);
-	      result(this);
+	      return selectNodes[selectNodes.length - 1];
 	    }
 	  }, {
 	    key: 'tracePath',
