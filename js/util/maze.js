@@ -11,6 +11,7 @@ class Maze {
     this.setEnd = this.setEnd.bind(this);
     this.toggleWall = this.toggleWall.bind(this);
     this.solve = this.solve.bind(this);
+    this.tracePath = this.tracePath.bind(this);
   }
 
   initializeGrid(height, width) {
@@ -59,6 +60,14 @@ class Maze {
   solve(result) {
     let solver = new Solver(this);
     solver.solveMaze(result);
+  }
+
+  tracePath(tile, result) {
+    debugger;
+    if (tile.className === 'start') return;
+    if (tile.className !== 'end') tile.className = 'path';
+    result(this);
+    this.tracePath(tile.parent, result);
   }
 }
 

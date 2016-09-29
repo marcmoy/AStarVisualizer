@@ -13,7 +13,7 @@ class Solver {
     if (this.interval) clearInterval(this.inverval);
     this.interval = window.setInterval(() => {
       this.step(result);
-    }, 50);
+    }, 1);
   }
 
   step(result) {
@@ -28,9 +28,9 @@ class Solver {
       if (row) tile = row[parentPos[1] + delta[1]];
 
       if (tile) {
-        if (tile.className === 'empty') {
+        if (tile.className === 'empty' || tile.className === 'open') {
+          if (tile.className === 'empty') this.openList.push(tile);
           tile.explore(parentTile, this.maze.endPos);
-          this.openList.push(tile);
         } else if (tile.className === 'end') {
           this.solved = true;
           this.openList.push(tile);
@@ -65,9 +65,8 @@ class Solver {
       return node.hCost === minHCost;
     });
 
-    let minNode = _.sample(selectNodes);
+    let minNode = selectNodes[0];
     let idx = this.openList.indexOf(minNode);
-
     minNode.removeClass('open');
     minNode.addClass('closed');
     this.closedList.push(minNode);
@@ -76,9 +75,8 @@ class Solver {
   }
 
   tracePath(tile, result) {
-    if (tile.className === 'start') return;
+    if (tile.className === 'start') return result(this);
     if (tile.className !== 'end') tile.className = 'path';
-    result(this);
     this.tracePath(tile.parent, result);
   }
 }

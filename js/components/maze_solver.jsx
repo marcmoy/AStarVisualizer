@@ -94,8 +94,8 @@ class MazeSolver extends React.Component {
 
   solve() {
     let maze = this.state.maze;
-    maze.solve((result) => {
-      this.setState({ maze: result });
+    maze.solve(result => {
+      this.setState({ maze: result, startPicker: false, endPicker: false });
     });
   }
 

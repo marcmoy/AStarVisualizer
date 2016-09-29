@@ -21585,7 +21585,7 @@
 	
 	      var maze = this.state.maze;
 	      maze.solve(function (result) {
-	        _this4.setState({ maze: result });
+	        _this4.setState({ maze: result, startPicker: false, endPicker: false });
 	      });
 	    }
 	  }, {
@@ -21616,12 +21616,7 @@
 	          endOn: this.state.endPicker,
 	          resetMaze: this.resetMaze,
 	          solve: this.solve
-	        }),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'slider' },
-	          'slider area'
-	        )
+	        })
 	      );
 	    }
 	  }]);
@@ -21746,6 +21741,7 @@
 	    this.setEnd = this.setEnd.bind(this);
 	    this.toggleWall = this.toggleWall.bind(this);
 	    this.solve = this.solve.bind(this);
+	    this.tracePath = this.tracePath.bind(this);
 	  }
 	
 	  _createClass(Maze, [{
@@ -21801,6 +21797,15 @@
 	      var solver = new _solver2.default(this);
 	      solver.solveMaze(result);
 	    }
+	  }, {
+	    key: 'tracePath',
+	    value: function tracePath(tile, result) {
+	      debugger;
+	      if (tile.className === 'start') return;
+	      if (tile.className !== 'end') tile.className = 'path';
+	      result(this);
+	      this.tracePath(tile.parent, result);
+	    }
 	  }]);
 	
 	  return Maze;
@@ -21831,6 +21836,7 @@
 	    _classCallCheck(this, Tile);
 	
 	    this.id = count;count += 1;
+	    this.gCost = 0;
 	    this.open = false;
 	    this.pos = pos;
 	    this.className = className;
@@ -21852,7 +21858,7 @@
 	    key: 'explore',
 	    value: function explore(parent, endPos) {
 	      if (!this.open) {
-	        this.gCost = dist(parent.pos, this.pos);
+	        this.gCost = dist(parent.pos, this.pos) + parent.gCost;
 	        this.hCost = dist(endPos, this.pos);
 	        this.parent = parent;
 	        this.open = true;
@@ -21928,7 +21934,7 @@
 	      if (this.interval) clearInterval(this.inverval);
 	      this.interval = window.setInterval(function () {
 	        _this.step(result);
-	      }, 50);
+	      }, 1);
 	    }
 	  }, {
 	    key: 'step',
@@ -21944,9 +21950,9 @@
 	        if (row) tile = row[parentPos[1] + delta[1]];
 	
 	        if (tile) {
-	          if (tile.className === 'empty') {
+	          if (tile.className === 'empty' || tile.className === 'open') {
+	            if (tile.className === 'empty') this.openList.push(tile);
 	            tile.explore(parentTile, this.maze.endPos);
-	            this.openList.push(tile);
 	          } else if (tile.className === 'end') {
 	            this.solved = true;
 	            this.openList.push(tile);
@@ -21982,9 +21988,8 @@
 	        return node.hCost === minHCost;
 	      });
 	
-	      var minNode = _lodash2.default.sample(selectNodes);
+	      var minNode = selectNodes[0];
 	      var idx = this.openList.indexOf(minNode);
-	
 	      minNode.removeClass('open');
 	      minNode.addClass('closed');
 	      this.closedList.push(minNode);
@@ -21994,9 +21999,8 @@
 	  }, {
 	    key: 'tracePath',
 	    value: function tracePath(tile, result) {
-	      if (tile.className === 'start') return;
+	      if (tile.className === 'start') return result(this);
 	      if (tile.className !== 'end') tile.className = 'path';
-	      result(this);
 	      this.tracePath(tile.parent, result);
 	    }
 	  }]);

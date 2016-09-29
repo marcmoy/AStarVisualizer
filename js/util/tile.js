@@ -3,6 +3,7 @@ var count = 0;
 class Tile {
   constructor(pos, className = 'empty') {
     this.id = count; count += 1;
+    this.gCost = 0;
     this.open = false;
     this.pos = pos;
     this.className = className;
@@ -20,7 +21,7 @@ class Tile {
 
   explore(parent, endPos) {
     if (!this.open) {
-      this.gCost = dist(parent.pos, this.pos);
+      this.gCost = dist(parent.pos, this.pos) + parent.gCost;
       this.hCost = dist(endPos, this.pos);
       this.parent = parent;
       this.open = true;
