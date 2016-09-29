@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 class Solver {
   constructor(maze) {
     this.maze = maze;
@@ -42,17 +44,30 @@ class Solver {
   }
 
   openNextNode(result) {
-    let idx = 0;
-    let minNode = this.openList[0];
-    let minFCost = minNode.fCost();
+    let minFCost = this.openList[0].fCost();
     for (let i = 1; i < this.openList.length; i++) {
       let node = this.openList[i];
-      if (node.fCost() < minFCost) {
-        minNode = node;
-        minFCost = node.fCost();
-        idx = i;
-      }
+      if (node.fCost() < minFCost) minFCost = node.fCost();
     }
+
+    let minNodes = this.openList.filter(node => {
+      return node.fCost() === minFCost;
+    });
+
+    let minHCost = minNodes[0].hCost;
+
+    for (let i = 1; i < minNodes.length; i++) {
+      let node = minNodes[i];
+      if (node.hCost < minHCost) minHCost = node.hCost;
+    }
+
+    let selectNodes = minNodes.filter(node => {
+      return node.hCost === minHCost;
+    });
+
+    let minNode = _.sample(selectNodes);
+    let idx = this.openList.indexOf(minNode);
+
     minNode.removeClass('open');
     minNode.addClass('closed');
     this.closedList.push(minNode);

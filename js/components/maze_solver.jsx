@@ -113,7 +113,6 @@ class MazeSolver extends React.Component {
           resetMaze={this.resetMaze}
           solve={this.solve}
         />
-        <div className='slider'>slider area</div>
       </div>
     );
   }
