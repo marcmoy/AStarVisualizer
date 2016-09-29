@@ -11,7 +11,7 @@ class Solver {
     if (this.interval) clearInterval(this.inverval);
     this.interval = window.setInterval(() => {
       this.step(result);
-    }, 200);
+    }, 50);
   }
 
   step(result) {
@@ -21,7 +21,10 @@ class Solver {
     let parentPos = parentTile.pos;
     for (let i = 0; i < DELTAS.length; i++) {
       let delta = DELTAS[i];
-      let tile = this.grid[parentPos[0] + delta[0]][parentPos[1] + delta[1]];
+      let tile;
+      let row = this.grid[parentPos[0] + delta[0]];
+      if (row) tile = row[parentPos[1] + delta[1]];
+
       if (tile) {
         if (tile.className === 'empty') {
           tile.explore(parentTile, this.maze.endPos);
@@ -29,9 +32,9 @@ class Solver {
         } else if (tile.className === 'end') {
           this.solved = true;
           this.openList.push(tile);
+          tile.parent = parentTile;
           clearInterval(this.interval);
-          this.tracePath(tile);
-          return;
+          return this.tracePath(tile, result);
         }
       }
     }
@@ -57,12 +60,11 @@ class Solver {
     result(this);
   }
 
-  tracePath(tile) {
-    if (tile.parent) {
-      if (tile.parent.className === 'start');
-      if (tile.className !== 'end') tile.addClass('path');
-      this.tracePath(tile.parent);
-    }
+  tracePath(tile, result) {
+    if (tile.className === 'start') return;
+    if (tile.className !== 'end') tile.className = 'path';
+    result(this);
+    this.tracePath(tile.parent, result);
   }
 }
 
