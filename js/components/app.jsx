@@ -1,14 +1,28 @@
 import React from 'react';
 import Settings from './settings';
-import { initialGrid } from '../util/maze';
-import $ from 'jquery';
+import aStarSolver from '../util/a_star_solver';
+import { tracePath } from '../util/a_star_solver';
+
+const initialGrid = (height = 20, width = 40) => {
+  let grid = [];
+  for (let i = 0; i < height; i++) {
+    let row = [];
+    for (let j = 0; j < width; j++) {
+      let node = { className: 'empty', pos: [i,j] };
+      row.push(node);
+    }
+    grid.push(row);
+  }
+  return grid;
+};
 
 class App extends React.Component {
   constructor() {
     super();
     this.state = { startDrag: false, endDrag: false, wallDrag: false };
     this.setUp = this.setUp.bind(this);
-    this.clearWalls = this.clearWalls.bind(this);
+    this.solve = this.solve.bind(this);
+    this.clearNode = this.clearNode.bind(this);
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseOver = this.handleMouseOver.bind(this);
   }
@@ -18,7 +32,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    $(document).mouseup(() => {
+    document.addEventListener('mouseup', () => {
       this.setState({ startDrag: false, endDrag: false, wallDrag: false });
     });
   }
@@ -34,11 +48,12 @@ class App extends React.Component {
     this.setState({ grid: grid, startPos: startPos, endPos: endPos });
   }
 
-  clearWalls() {
+  clearNode() {
+    let ignore = ['wall', 'path', 'open', 'closed'];
     let clearedGrid = this.state.grid.map(row => {
       return row.map(node => {
         let name = node.className;
-        node.className = name === 'wall' ? 'empty' : name;
+        node.className = ignore.includes(name) ? 'empty' : name;
         return node;
       });
     });
@@ -46,6 +61,9 @@ class App extends React.Component {
   }
 
   solve() {
+    let grid = this.state.grid;
+    let solvedGrid = aStarSolver(grid, this.state.startPos, this.state.endPos);
+    this.setState({ grid: solvedGrid });
   }
 
   handleMouseDown(e) {
@@ -131,7 +149,7 @@ class App extends React.Component {
         </div>
         <Settings
           resetGrid={this.setUp}
-          clearWalls={this.clearWalls}
+          clearNode={this.clearNode}
           solve={this.solve}
         />
       </div>
