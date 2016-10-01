@@ -8,7 +8,7 @@ html {
   height: 100%;
 }
 
-h1.title {
+/*h1.title {
   margin: 30px 50px;
   color: #557dce;
   font-size: 48px;
@@ -19,11 +19,16 @@ h2.author {
   font-size: 20px;
   margin: -20px 0px 20px 80px;
   text-decoration: italicize;
+}*/
+
+.container {
+  /*position: relative;
+  display: flex;
+  justify-content: center;*/
 }
 
 .grid {
   float: left;
-  margin-left: 30px;
 }
 
 table {
@@ -43,20 +48,13 @@ td.empty { background: white }
 td.wall { background-color: #827676 }
 td.closed { background-color: rgba(243,120,111,0.30) }
 td.open { background-color: rgba(58,243,58,0.30) }
-td.path { background-color: #9c8d3b }
+td.path { background-color: blue }
 
-td.wall, td.open, td.closed {
+td.wall, td.open, td.closed, td.path {
   -webkit-animation: insertTile 0.4s normal; /* Safari 4+ */
   -moz-animation:    insertTile 0.4s normal; /* Fx 5+ */
   -o-animation:      insertTile 0.4s normal; /* Opera 12+ */
   animation:         insertTile 0.4s normal;
-}
-
-td.path{
-  -webkit-animation: insertPath 3s infinite; /* Safari 4+ */
-  -moz-animation:    insertPath 3s infinite; /* Fx 5+ */
-  -o-animation:      insertPath 3s infinite; /* Opera 12+ */
-  animation:         insertPath 3s infinite;
 }
 
 /* Chrome, Safari, Opera */
@@ -64,30 +62,20 @@ td.path{
 /* Standard syntax */
 @keyframes insertTile { from {opacity: 0} to {opacity: 1} }
 
-/* Chrome, Safari, Opera */
-@-webkit-keyframes insertPath {
-  0% {background-color: #9c8d3b}
-  66% {background-color: yellow}
-  100% {background-color: #9c8d3b}
-}
-/* Standard syntax */
-@keyframes insertPath {
-  0% {background-color: #9c8d3b}
-  66% {background-color: yellow}
-  100% {background-color: #9c8d3b}
-}
-
 .settings {
-  float: left;
+  position: fixed;
+  right: 0;
+  background: white;
 }
 
 .settings ul {
   list-style-type: none;
   overflow: hidden;
+  padding: 0;
+  margin: auto;
 }
 
 button {
-  font-family: "Oxygen", sans-serif;
   font-size: 16px;
   -webkit-border-radius: 9;
   -moz-border-radius: 9;

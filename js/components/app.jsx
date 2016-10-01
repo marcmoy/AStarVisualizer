@@ -3,7 +3,7 @@ import Settings from './settings';
 import aStarSolver from '../util/a_star_solver';
 import $ from 'jquery';
 
-const initialGrid = (height = 25, width = 50) => {
+const initialGrid = (height = 28, width = 60) => {
   let grid = [];
   for (let i = 0; i < height; i++) {
     let row = [];
@@ -61,7 +61,7 @@ class App extends React.Component {
   }
 
   solve() {
-    let grid = cloneGrid(this.state.grid);
+    let grid = this.state.grid;
     let steps = [];
     let recordStep = step => steps.push(step);
     aStarSolver(grid, this.state.startPos, this.state.endPos, recordStep);
@@ -153,7 +153,7 @@ class App extends React.Component {
     // <h1 className='title'>Shortest Path Visualizer</h1>
     // <h2 className='author'>by Marc Moy</h2>
     return(
-      <div>
+      <div className='container'>
         <div className='grid'>
           <table>
             <tbody>
@@ -170,18 +170,5 @@ class App extends React.Component {
     );
   }
 }
-
-const cloneGrid = grid => {
-  let clone = [];
-  for (let i = 0; i < grid.length; i++) {
-    let row = [];
-    for (let j = 0; j < grid[i].length; j++) {
-      let node = grid[i][j];
-      row.push(Object.assign({}, node));
-    }
-    clone.push(row);
-  }
-  return clone;
-};
 
 export default App;

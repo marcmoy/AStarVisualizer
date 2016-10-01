@@ -21469,8 +21469,8 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
 	var initialGrid = function initialGrid() {
-	  var height = arguments.length <= 0 || arguments[0] === undefined ? 25 : arguments[0];
-	  var width = arguments.length <= 1 || arguments[1] === undefined ? 50 : arguments[1];
+	  var height = arguments.length <= 0 || arguments[0] === undefined ? 28 : arguments[0];
+	  var width = arguments.length <= 1 || arguments[1] === undefined ? 60 : arguments[1];
 	
 	  var grid = [];
 	  for (var i = 0; i < height; i++) {
@@ -21545,7 +21545,7 @@
 	    value: function solve() {
 	      var _this3 = this;
 	
-	      var grid = cloneGrid(this.state.grid);
+	      var grid = this.state.grid;
 	      var steps = [];
 	      var recordStep = function recordStep(step) {
 	        return steps.push(step);
@@ -21646,7 +21646,7 @@
 	      // <h2 className='author'>by Marc Moy</h2>
 	      return _react2.default.createElement(
 	        'div',
-	        null,
+	        { className: 'container' },
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'grid' },
@@ -21671,19 +21671,6 @@
 	
 	  return App;
 	}(_react2.default.Component);
-	
-	var cloneGrid = function cloneGrid(grid) {
-	  var clone = [];
-	  for (var i = 0; i < grid.length; i++) {
-	    var row = [];
-	    for (var j = 0; j < grid[i].length; j++) {
-	      var node = grid[i][j];
-	      row.push(Object.assign({}, node));
-	    }
-	    clone.push(row);
-	  }
-	  return clone;
-	};
 	
 	exports.default = App;
 
