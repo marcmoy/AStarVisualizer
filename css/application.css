@@ -8,25 +8,6 @@ html {
   height: 100%;
 }
 
-/*h1.title {
-  margin: 30px 50px;
-  color: #557dce;
-  font-size: 48px;
-  text-shadow: 1px 1px 1px #000;
-}
-
-h2.author {
-  font-size: 20px;
-  margin: -20px 0px 20px 80px;
-  text-decoration: italicize;
-}*/
-
-.container {
-  /*position: relative;
-  display: flex;
-  justify-content: center;*/
-}
-
 .grid {
   float: left;
 }
@@ -65,7 +46,6 @@ td.wall, td.open, td.closed, td.path {
 .settings {
   position: fixed;
   right: 0;
-  background: white;
 }
 
 .settings ul {
@@ -106,6 +86,12 @@ button:active {
   box-shadow: 0 2px #27496d;
   background: #3cb0fd;
   transform: translateY(2px);
+}
+
+button:disabled {
+  background: #ddd;
+  box-shadow: 0 2px #ccc;
+  cursor: not-allowed;
 }
 
 .slider {

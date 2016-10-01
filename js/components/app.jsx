@@ -3,32 +3,25 @@ import Settings from './settings';
 import aStarSolver from '../util/a_star_solver';
 import $ from 'jquery';
 
-const initialGrid = (height = 28, width = 60) => {
-  let grid = [];
-  for (let i = 0; i < height; i++) {
-    let row = [];
-    for (let j = 0; j < width; j++) {
-      let node = { className: 'empty', pos: [i,j] };
-      row.push(node);
-    }
-    grid.push(row);
-  }
-  return grid;
-};
-
 class App extends React.Component {
   constructor() {
     super();
-    this.state = { startDrag: false, endDrag: false, wallDrag: false };
-    this.setUp = this.setUp.bind(this);
+    this.state = {
+      startDrag: false,
+      endDrag: false,
+      wallDrag: false,
+      solving: false
+    };
+    this.resetGrid = this.resetGrid.bind(this);
     this.solve = this.solve.bind(this);
-    this.clearNode = this.clearNode.bind(this);
+    this.clearWalls = this.clearWalls.bind(this);
+    this.clearPath = this.clearPath.bind(this);
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseOver = this.handleMouseOver.bind(this);
   }
 
   componentWillMount() {
-    this.setUp();
+    this.resetGrid();
   }
 
   componentDidMount() {
@@ -37,7 +30,8 @@ class App extends React.Component {
     });
   }
 
-  setUp() {
+  resetGrid() {
+    if (this.state.solving) return;
     let grid = initialGrid();
     let height = grid.length;
     let width = grid[0].length;
@@ -48,20 +42,23 @@ class App extends React.Component {
     this.setState({ grid: grid, startPos: startPos, endPos: endPos });
   }
 
-  clearNode() {
-    let ignore = ['wall', 'path', 'open', 'closed'];
-    let clearedGrid = this.state.grid.map(row => {
-      return row.map(node => {
-        let name = node.className;
-        node.className = ignore.includes(name) ? 'empty' : name;
-        return node;
-      });
-    });
+  clearWalls() {
+    if (this.state.solving) return;
+    let clearedGrid = clearGrid(this.state.grid, ['wall']);
     this.setState({ grid: clearedGrid });
   }
 
+  clearPath() {
+    if (this.state.solving) return;
+    let clearedGrid = clearGrid(this.state.grid, ['path','open','closed']);
+    this.setState({ grid: clearedGrid });
+    $('td.open').removeClass('open').addClass('empty');
+    $('td.closed').removeClass('closed').addClass('empty');
+  }
+
   solve() {
-    let grid = this.state.grid;
+    this.setState({ solving: true });
+    let grid = cloneGrid(this.state.grid);
     let steps = [];
     let recordStep = step => steps.push(step);
     aStarSolver(grid, this.state.startPos, this.state.endPos, recordStep);
@@ -74,7 +71,7 @@ class App extends React.Component {
         $td.removeClass();
         $td.addClass(node.className);
       } else {
-        this.setState({ grid: grid });
+        this.setState({ grid: grid, solving: false });
         clearInterval(this.interval);
       }
     }, 1);
@@ -82,6 +79,7 @@ class App extends React.Component {
 
   handleMouseDown(e) {
     e.preventDefault();
+    if (this.state.solving) return;
     let type = e.target.className;
     let grid = this.state.grid;
     switch (type) {
@@ -108,6 +106,7 @@ class App extends React.Component {
 
   handleMouseOver(e) {
     e.preventDefault();
+    if (this.state.solving) return;
     let pos = this.grabPos(e);
     let grid = this.state.grid;
     let node = grid[pos[0]][pos[1]];
@@ -150,8 +149,6 @@ class App extends React.Component {
       table.push(<tr key={i}>{nodes}</tr>);
     }
 
-    // <h1 className='title'>Shortest Path Visualizer</h1>
-    // <h2 className='author'>by Marc Moy</h2>
     return(
       <div className='container'>
         <div className='grid'>
@@ -162,13 +159,57 @@ class App extends React.Component {
           </table>
         </div>
         <Settings
-          resetGrid={this.setUp}
-          clearNode={this.clearNode}
+          resetGrid={this.resetGrid}
+          clearWalls={this.clearWalls}
+          clearPath={this.clearPath}
           solve={this.solve}
+          solving={this.state.solving}
         />
       </div>
     );
   }
 }
+
+const cloneGrid = grid => {
+  let clone = [];
+  for (let i = 0; i < grid.length; i++) {
+    let row = [];
+    for (let j = 0; j < grid[i].length; j++) {
+      let node = Object.assign({}, grid[i][j]);
+      row.push(node);
+    }
+    clone.push(row);
+  }
+  return clone;
+};
+
+const windowHeight = $(window).height();
+const windowWidth = $(window).width();
+const intialHeight = windowHeight * 0.85 / 20;
+const intialWidth = windowWidth / 20;
+
+const initialGrid = () => {
+  let grid = [];
+  for (let i = 0; i < intialHeight; i++) {
+    let row = [];
+    for (let j = 0; j < intialWidth; j++) {
+      let node = { className: 'empty', pos: [i,j] };
+      row.push(node);
+    }
+    grid.push(row);
+  }
+  return grid;
+};
+
+const clearGrid = (grid, [names]) => {
+  let clearedGrid = grid.map(row => {
+    return row.map(node => {
+      let name = node.className;
+      node.className = names.includes(name) ? 'empty' : name;
+      return node;
+    });
+  });
+  return clearedGrid;
+};
 
 export default App;

@@ -21442,6 +21442,8 @@
 	  value: true
 	});
 	
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _react = __webpack_require__(1);
@@ -21468,22 +21470,6 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var initialGrid = function initialGrid() {
-	  var height = arguments.length <= 0 || arguments[0] === undefined ? 28 : arguments[0];
-	  var width = arguments.length <= 1 || arguments[1] === undefined ? 60 : arguments[1];
-	
-	  var grid = [];
-	  for (var i = 0; i < height; i++) {
-	    var row = [];
-	    for (var j = 0; j < width; j++) {
-	      var node = { className: 'empty', pos: [i, j] };
-	      row.push(node);
-	    }
-	    grid.push(row);
-	  }
-	  return grid;
-	};
-	
 	var App = function (_React$Component) {
 	  _inherits(App, _React$Component);
 	
@@ -21492,10 +21478,16 @@
 	
 	    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
 	
-	    _this.state = { startDrag: false, endDrag: false, wallDrag: false };
-	    _this.setUp = _this.setUp.bind(_this);
+	    _this.state = {
+	      startDrag: false,
+	      endDrag: false,
+	      wallDrag: false,
+	      solving: false
+	    };
+	    _this.resetGrid = _this.resetGrid.bind(_this);
 	    _this.solve = _this.solve.bind(_this);
-	    _this.clearNode = _this.clearNode.bind(_this);
+	    _this.clearWalls = _this.clearWalls.bind(_this);
+	    _this.clearPath = _this.clearPath.bind(_this);
 	    _this.handleMouseDown = _this.handleMouseDown.bind(_this);
 	    _this.handleMouseOver = _this.handleMouseOver.bind(_this);
 	    return _this;
@@ -21504,7 +21496,7 @@
 	  _createClass(App, [{
 	    key: 'componentWillMount',
 	    value: function componentWillMount() {
-	      this.setUp();
+	      this.resetGrid();
 	    }
 	  }, {
 	    key: 'componentDidMount',
@@ -21516,8 +21508,9 @@
 	      });
 	    }
 	  }, {
-	    key: 'setUp',
-	    value: function setUp() {
+	    key: 'resetGrid',
+	    value: function resetGrid() {
+	      if (this.state.solving) return;
 	      var grid = initialGrid();
 	      var height = grid.length;
 	      var width = grid[0].length;
@@ -21528,24 +21521,28 @@
 	      this.setState({ grid: grid, startPos: startPos, endPos: endPos });
 	    }
 	  }, {
-	    key: 'clearNode',
-	    value: function clearNode() {
-	      var ignore = ['wall', 'path', 'open', 'closed'];
-	      var clearedGrid = this.state.grid.map(function (row) {
-	        return row.map(function (node) {
-	          var name = node.className;
-	          node.className = ignore.includes(name) ? 'empty' : name;
-	          return node;
-	        });
-	      });
+	    key: 'clearWalls',
+	    value: function clearWalls() {
+	      if (this.state.solving) return;
+	      var clearedGrid = clearGrid(this.state.grid, ['wall']);
 	      this.setState({ grid: clearedGrid });
+	    }
+	  }, {
+	    key: 'clearPath',
+	    value: function clearPath() {
+	      if (this.state.solving) return;
+	      var clearedGrid = clearGrid(this.state.grid, ['path', 'open', 'closed']);
+	      this.setState({ grid: clearedGrid });
+	      (0, _jquery2.default)('td.open').removeClass('open').addClass('empty');
+	      (0, _jquery2.default)('td.closed').removeClass('closed').addClass('empty');
 	    }
 	  }, {
 	    key: 'solve',
 	    value: function solve() {
 	      var _this3 = this;
 	
-	      var grid = this.state.grid;
+	      this.setState({ solving: true });
+	      var grid = cloneGrid(this.state.grid);
 	      var steps = [];
 	      var recordStep = function recordStep(step) {
 	        return steps.push(step);
@@ -21560,7 +21557,7 @@
 	          $td.removeClass();
 	          $td.addClass(node.className);
 	        } else {
-	          _this3.setState({ grid: grid });
+	          _this3.setState({ grid: grid, solving: false });
 	          clearInterval(_this3.interval);
 	        }
 	      }, 1);
@@ -21569,6 +21566,7 @@
 	    key: 'handleMouseDown',
 	    value: function handleMouseDown(e) {
 	      e.preventDefault();
+	      if (this.state.solving) return;
 	      var type = e.target.className;
 	      var grid = this.state.grid;
 	      switch (type) {
@@ -21599,6 +21597,7 @@
 	    key: 'handleMouseOver',
 	    value: function handleMouseOver(e) {
 	      e.preventDefault();
+	      if (this.state.solving) return;
 	      var pos = this.grabPos(e);
 	      var grid = this.state.grid;
 	      var node = grid[pos[0]][pos[1]];
@@ -21642,8 +21641,6 @@
 	        ));
 	      }
 	
-	      // <h1 className='title'>Shortest Path Visualizer</h1>
-	      // <h2 className='author'>by Marc Moy</h2>
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'container' },
@@ -21661,9 +21658,11 @@
 	          )
 	        ),
 	        _react2.default.createElement(_settings2.default, {
-	          resetGrid: this.setUp,
-	          clearNode: this.clearNode,
-	          solve: this.solve
+	          resetGrid: this.resetGrid,
+	          clearWalls: this.clearWalls,
+	          clearPath: this.clearPath,
+	          solve: this.solve,
+	          solving: this.state.solving
 	        })
 	      );
 	    }
@@ -21671,6 +21670,52 @@
 	
 	  return App;
 	}(_react2.default.Component);
+	
+	var cloneGrid = function cloneGrid(grid) {
+	  var clone = [];
+	  for (var i = 0; i < grid.length; i++) {
+	    var row = [];
+	    for (var j = 0; j < grid[i].length; j++) {
+	      var node = Object.assign({}, grid[i][j]);
+	      row.push(node);
+	    }
+	    clone.push(row);
+	  }
+	  return clone;
+	};
+	
+	var windowHeight = (0, _jquery2.default)(window).height();
+	var windowWidth = (0, _jquery2.default)(window).width();
+	var intialHeight = windowHeight * 0.85 / 20;
+	var intialWidth = windowWidth / 20;
+	
+	var initialGrid = function initialGrid() {
+	  var grid = [];
+	  for (var i = 0; i < intialHeight; i++) {
+	    var row = [];
+	    for (var j = 0; j < intialWidth; j++) {
+	      var node = { className: 'empty', pos: [i, j] };
+	      row.push(node);
+	    }
+	    grid.push(row);
+	  }
+	  return grid;
+	};
+	
+	var clearGrid = function clearGrid(grid, _ref) {
+	  var _ref2 = _slicedToArray(_ref, 1);
+	
+	  var names = _ref2[0];
+	
+	  var clearedGrid = grid.map(function (row) {
+	    return row.map(function (node) {
+	      var name = node.className;
+	      node.className = names.includes(name) ? 'empty' : name;
+	      return node;
+	    });
+	  });
+	  return clearedGrid;
+	};
 	
 	exports.default = App;
 
@@ -21692,8 +21737,10 @@
 	
 	var Settings = function Settings(_ref) {
 	  var resetGrid = _ref.resetGrid;
-	  var clearNode = _ref.clearNode;
+	  var clearWalls = _ref.clearWalls;
+	  var clearPath = _ref.clearPath;
 	  var solve = _ref.solve;
+	  var solving = _ref.solving;
 	
 	  return _react2.default.createElement(
 	    'div',
@@ -21706,7 +21753,7 @@
 	        null,
 	        _react2.default.createElement(
 	          'button',
-	          { onClick: resetGrid },
+	          { onClick: resetGrid, disabled: solving },
 	          'Reset grid'
 	        )
 	      ),
@@ -21715,7 +21762,7 @@
 	        null,
 	        _react2.default.createElement(
 	          'button',
-	          { onClick: clearNode, value: 'wall' },
+	          { onClick: clearWalls, disabled: solving },
 	          'Clear walls'
 	        )
 	      ),
@@ -21724,7 +21771,16 @@
 	        null,
 	        _react2.default.createElement(
 	          'button',
-	          { onClick: solve },
+	          { onClick: clearPath, disabled: solving },
+	          'Clear path'
+	        )
+	      ),
+	      _react2.default.createElement(
+	        'li',
+	        null,
+	        _react2.default.createElement(
+	          'button',
+	          { onClick: solve, disabled: solving },
 	          ' Solve '
 	        )
 	      )
@@ -21753,14 +21809,13 @@
 	var aStarSolver = function aStarSolver(grid, start, end, recordStep) {
 	  var startNode = grid[start[0]][start[1]];
 	
-	  // set initial hueristic and movement values for startNode
-	  var initialDist = dist(start, end);
+	  var initialDist = dist(start, end); // distance from start to end
 	  startNode.g = 0; // g = movement cost
-	  startNode.h = initialDist; // h = hueristic cost (dist to goal)
+	  startNode.h = initialDist; // h = hueristic cost (dist to end)
 	  startNode.f = initialDist; // f = g + h
 	
 	  var openList = [startNode]; // start open list with start node
-	  var currentNode = void 0; // keep currentNode scope outside of while loop for later
+	  var currentNode = void 0; // declare currentNode scope
 	
 	  whileLoop: while (openList.length !== 0) {
 	    // loop until open list is empty
@@ -21808,19 +21863,18 @@
 	          break;
 	      }
 	
-	      node.g = g;
-	      node.f = node.g + node.h;
-	      node.parent = currentNode;
+	      node.g = g; // set new movement cost
+	      node.f = node.g + node.h; // calculate new f cost
+	      node.parent = currentNode; // assign parent node
 	    }
 	
-	    // close currentNode
-	    if (currentNode.className === 'start') continue;
-	    currentNode.className = 'closed';
+	    if (currentNode.className === 'start') continue; // ignore startNode
+	    currentNode.className = 'closed'; // close currentNode
 	  }
 	
 	  var endNode = grid[end[0]][end[1]]; // find end node
 	  recordStep(Object.assign({}, endNode)); // record step
-	  return tracePath(endNode, grid, recordStep); // start recursion with end node
+	  return tracePath(endNode, grid, recordStep); // start recursion
 	};
 	
 	// use recursion to trace the path from end node to start node
@@ -21846,8 +21900,8 @@
 	  var yDiff = Math.abs(y1 - y2);
 	  var maxDiff = Math.min(xDiff, yDiff);
 	  var minDiff = Math.abs(xDiff - yDiff);
-	  return maxDiff * 14 + minDiff * 10;
-	  // return (xDiff + yDiff) * 10;
+	  return maxDiff * 14 + minDiff * 10; // allows for diagonals movements
+	  // return (xDiff + yDiff) * 10;       // allows only up and down movements
 	};
 	
 	var lowestF = function lowestF(openList) {
@@ -21864,6 +21918,8 @@
 	};
 	
 	var DELTAS = [[-1, -1], [-1, 0], [-1, 1], [0, -1], /*node*/[0, 1], [1, -1], [1, 0], [1, 1]];
+	
+	// DELTAS for up and down movements only
 	
 	// const DELTAS = [
 	//             [-1, 0],
@@ -21884,10 +21940,11 @@
 	    var y = currentPos[1] + delta[1];
 	
 	    // don't check if x or y is out of range
+	    // prevent undefined error
 	    if (_lodash2.default.inRange(x, height) && _lodash2.default.inRange(y, width)) {
 	      var node = grid[x][y];
 	      var name = node.className;
-	      // don't consider if start node or a wall
+	      // don't consider start node or a walls
 	      if (name !== 'start' && name !== 'wall') {
 	        nodes.push(grid[x][y]);
 	      }
