@@ -1,9 +1,9 @@
 import React from 'react';
 import Settings from './settings';
 import aStarSolver from '../util/a_star_solver';
-import { tracePath } from '../util/a_star_solver';
+import $ from 'jquery';
 
-const initialGrid = (height = 20, width = 40) => {
+const initialGrid = (height = 25, width = 50) => {
   let grid = [];
   for (let i = 0; i < height; i++) {
     let row = [];
@@ -61,9 +61,23 @@ class App extends React.Component {
   }
 
   solve() {
-    let grid = this.state.grid;
-    let solvedGrid = aStarSolver(grid, this.state.startPos, this.state.endPos);
-    this.setState({ grid: solvedGrid });
+    let grid = cloneGrid(this.state.grid);
+    let steps = [];
+    let recordStep = step => steps.push(step);
+    aStarSolver(grid, this.state.startPos, this.state.endPos, recordStep);
+
+    this.interval = setInterval(() => {
+      if (steps.length) {
+        let node = steps.shift();
+        let pos = node.pos.join(',');
+        let $td = $(`td[data-value="${pos}"]`);
+        $td.removeClass();
+        $td.addClass(node.className);
+      } else {
+        this.setState({ grid: grid });
+        clearInterval(this.interval);
+      }
+    }, 1);
   }
 
   handleMouseDown(e) {
@@ -89,7 +103,7 @@ class App extends React.Component {
   }
 
   grabPos(e) {
-    return e.target.attributes.value.value.split(',').map(i => parseInt(i));
+    return e.target.dataset.value.split(',').map(i => parseInt(i));
   }
 
   handleMouseOver(e) {
@@ -127,7 +141,7 @@ class App extends React.Component {
         nodes.push(
           <td
             className={node.className}
-            value={node.pos} key={node.pos}
+            data-value={node.pos} key={node.pos}
             onMouseDown={this.handleMouseDown}
             onMouseOver={this.handleMouseOver}
             />
@@ -136,10 +150,10 @@ class App extends React.Component {
       table.push(<tr key={i}>{nodes}</tr>);
     }
 
+    // <h1 className='title'>Shortest Path Visualizer</h1>
+    // <h2 className='author'>by Marc Moy</h2>
     return(
       <div>
-        <h1 className='title'>Shortest Path Visualizer</h1>
-        <h2 className='author'>by Marc Moy</h2>
         <div className='grid'>
           <table>
             <tbody>
@@ -156,5 +170,18 @@ class App extends React.Component {
     );
   }
 }
+
+const cloneGrid = grid => {
+  let clone = [];
+  for (let i = 0; i < grid.length; i++) {
+    let row = [];
+    for (let j = 0; j < grid[i].length; j++) {
+      let node = grid[i][j];
+      row.push(Object.assign({}, node));
+    }
+    clone.push(row);
+  }
+  return clone;
+};
 
 export default App;

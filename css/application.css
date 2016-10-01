@@ -31,8 +31,8 @@ table {
 }
 
 td {
-  height: 15px;
-  width: 15px;
+  height: 20px;
+  width: 20px;
   cursor: pointer;
   outline: 1px solid #eee;
 }
@@ -43,25 +43,38 @@ td.empty { background: white }
 td.wall { background-color: #827676 }
 td.closed { background-color: rgba(243,120,111,0.30) }
 td.open { background-color: rgba(58,243,58,0.30) }
-td.path { background-color: blue }
+td.path { background-color: #9c8d3b }
 
-td.wall {
-  -webkit-animation: insertTile 0.3s normal; /* Safari 4+ */
-  -moz-animation:    insertTile 0.3s normal; /* Fx 5+ */
-  -o-animation:      insertTile 0.3s normal; /* Opera 12+ */
-  animation:         insertTile 0.3s normal;
+td.wall, td.open, td.closed {
+  -webkit-animation: insertTile 0.4s normal; /* Safari 4+ */
+  -moz-animation:    insertTile 0.4s normal; /* Fx 5+ */
+  -o-animation:      insertTile 0.4s normal; /* Opera 12+ */
+  animation:         insertTile 0.4s normal;
+}
+
+td.path{
+  -webkit-animation: insertPath 3s infinite; /* Safari 4+ */
+  -moz-animation:    insertPath 3s infinite; /* Fx 5+ */
+  -o-animation:      insertPath 3s infinite; /* Opera 12+ */
+  animation:         insertPath 3s infinite;
 }
 
 /* Chrome, Safari, Opera */
-@-webkit-keyframes insertTile {
-  from {opacity: 0}
-  to {opacity: 1}
-}
-
+@-webkit-keyframes insertTile { from {opacity: 0} to {opacity: 1} }
 /* Standard syntax */
-@keyframes insertTile {
-  from {opacity: 0}
-  to {opacity: 1}
+@keyframes insertTile { from {opacity: 0} to {opacity: 1} }
+
+/* Chrome, Safari, Opera */
+@-webkit-keyframes insertPath {
+  0% {background-color: #9c8d3b}
+  66% {background-color: yellow}
+  100% {background-color: #9c8d3b}
+}
+/* Standard syntax */
+@keyframes insertPath {
+  0% {background-color: #9c8d3b}
+  66% {background-color: yellow}
+  100% {background-color: #9c8d3b}
 }
 
 .settings {
@@ -87,7 +100,7 @@ button {
   text-decoration: none;
   border: none;
   margin: 8px 4px;
-  width: 14em;
+  width: 8em;
   float: left;
   cursor: pointer;
 }

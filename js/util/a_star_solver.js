@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const aStarSolver = (grid, start, end) => {
+const aStarSolver = (grid, start, end, recordStep) => {
   let startNode = grid[start[0]][start[1]];
 
   // set initial hueristic and movement values for startNode
@@ -23,6 +23,7 @@ const aStarSolver = (grid, start, end) => {
     forLoop:
     for (let i = 0; i < successors.length; i++) {
       let node = successors[i];
+      recordStep(Object.assign({}, node));            // record step
 
       // calculate movement value from currentNode at this instance
       let g = currentNode.g + dist(currentNode.pos, node.pos);
@@ -63,11 +64,12 @@ const aStarSolver = (grid, start, end) => {
   }
 
   let endNode = grid[end[0]][end[1]];          // find end node
-  return tracePath(endNode, grid);             // start recursion with end node
+  recordStep(Object.assign({}, endNode));      // record step
+  return tracePath(endNode, grid, recordStep); // start recursion with end node
 };
 
 // use recursion to trace the path from end node to start node
-const tracePath = (node, grid) => {
+const tracePath = (node, grid, recordStep) => {
   if (node.className === 'start') return grid;
 
   if (node.className !== 'end') {
@@ -75,7 +77,9 @@ const tracePath = (node, grid) => {
     grid[pos[0]][pos[1]].className = 'path';
   }
 
-  return tracePath(node.parent, grid);
+  recordStep(Object.assign({}, node));       // record step
+
+  return tracePath(node.parent, grid, recordStep);
 };
 
 const dist = (pos1, pos2) => {
