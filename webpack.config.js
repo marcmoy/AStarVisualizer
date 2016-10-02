@@ -1,3 +1,5 @@
+// const webpack = require('webpack');
+
 module.exports = {
   entry: "./js/entry.jsx",
   output: {
@@ -17,7 +19,20 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: ["", ".js", '.jsx']
+    extensions: ["", ".js", '.jsx'],
+  //   resolve : {
+  //   alias: {
+  //     // bind version of jquery-ui
+  //     "jquery-ui": "jquery-ui/jquery-ui.js",
+  //     // bind to modules;
+  //     modules: path.join(__dirname, "node_modules")
+  //   }
   },
-  devtool: 'source-maps'
+  devtool: 'source-maps',
+  // plugins: [
+  //   new webpack.ProvidePlugin({
+  //     "$":"jquery",
+  //     "jQuery":"jquery",
+  //     "window.jQuery":"jquery"
+  //   })]
 };

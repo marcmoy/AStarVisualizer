@@ -1,5 +1,6 @@
 import React from 'react';
 import Settings from './settings';
+import Instructions from './instructions';
 import aStarSolver from '../util/a_star_solver';
 import $ from 'jquery';
 
@@ -62,14 +63,19 @@ class App extends React.Component {
     let steps = [];
     let recordStep = step => steps.push(step);
     aStarSolver(grid, this.state.startPos, this.state.endPos, recordStep);
+    this.animateSteps(grid, steps);
+  }
+
+  animateSteps(grid, steps) {
+    let i = 0;
+    let max = steps.length;
 
     this.interval = setInterval(() => {
-      if (steps.length) {
-        let node = steps.shift();
+      if (i < max) {
+        let node = steps[i];
         let pos = node.pos.join(',');
-        let $td = $(`td[data-value="${pos}"]`);
-        $td.removeClass();
-        $td.addClass(node.className);
+        document.getElementById(pos).className = node.className;
+        i++;
       } else {
         this.setState({ grid: grid, solving: false });
         clearInterval(this.interval);
@@ -140,7 +146,8 @@ class App extends React.Component {
         nodes.push(
           <td
             className={node.className}
-            data-value={node.pos} key={node.pos}
+            id={node.pos} key={node.pos}
+            data-value={node.pos}
             onMouseDown={this.handleMouseDown}
             onMouseOver={this.handleMouseOver}
             />
@@ -151,6 +158,7 @@ class App extends React.Component {
 
     return(
       <div className='container'>
+        <Instructions/>
         <div className='grid'>
           <table>
             <tbody>
