@@ -1,6 +1,6 @@
 import React from 'react';
 import Settings from './settings';
-import Instructions from './instructions';
+import Introduction from './introduction';
 import aStarSolver from '../util/a_star_solver';
 import $ from 'jquery';
 
@@ -158,7 +158,7 @@ class App extends React.Component {
 
     return(
       <div className='container'>
-        <Instructions/>
+        <Introduction/>
         <div className='grid'>
           <table>
             <tbody>

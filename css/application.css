@@ -38,9 +38,7 @@ td.wall {
   animation:         insertTile 0.4s normal;
 }
 
-/* Chrome, Safari, Opera */
 @-webkit-keyframes insertTile { from {opacity: 0} to {opacity: 1} }
-/* Standard syntax */
 @keyframes insertTile { from {opacity: 0} to {opacity: 1} }
 
 .settings {
@@ -76,10 +74,17 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background: #3cb0fd;
+button:hover:enabled {
   text-decoration: none;
+  -webkit-animation: glow 0.4s normal; /* Safari 4+ */
+  -moz-animation:    glow 0.4s normal; /* Fx 5+ */
+  -o-animation:      glow 0.4s normal; /* Opera 12+ */
+  animation:         glow 0.4s normal;
+  background-color: #3cb0fd;
 }
+
+@-webkit-keyframes glow { from {background-color: #3498db} to {background-color: #3cb0fd} }
+@keyframes glow { from {background-color: #3498db} to {background-color: #3cb0fd} }
 
 button:focus {
   outline: 0;
@@ -117,6 +122,17 @@ button:disabled {
   font-size: 12px;
   cursor: pointer;
 }
+
+#hide-instructions:hover {
+  -webkit-animation: hide 0.4s normal; /* Safari 4+ */
+  -moz-animation:    hide 0.4s normal; /* Fx 5+ */
+  -o-animation:      hide 0.4s normal; /* Opera 12+ */
+  animation:         hide 0.4s normal;
+  color: #ccc;
+}
+
+@-webkit-keyframes hide { from {color: white} to {color: #ccc} }
+@keyframes hide { from {color: white} to {color: #ccc} }
 
 .draggable {
   background-color: rgba(0, 0, 0, 0.5);

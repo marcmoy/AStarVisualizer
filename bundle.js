@@ -21454,9 +21454,9 @@
 	
 	var _settings2 = _interopRequireDefault(_settings);
 	
-	var _instructions = __webpack_require__(176);
+	var _introduction = __webpack_require__(176);
 	
-	var _instructions2 = _interopRequireDefault(_instructions);
+	var _introduction2 = _interopRequireDefault(_introduction);
 	
 	var _a_star_solver = __webpack_require__(177);
 	
@@ -21655,7 +21655,7 @@
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'container' },
-	        _react2.default.createElement(_instructions2.default, null),
+	        _react2.default.createElement(_introduction2.default, null),
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'grid' },
@@ -48718,16 +48718,16 @@
 	
 	__webpack_require__(175);
 	
-	var Instructions = function (_React$Component) {
-	  _inherits(Instructions, _React$Component);
+	var Introduction = function (_React$Component) {
+	  _inherits(Introduction, _React$Component);
 	
-	  function Instructions() {
-	    _classCallCheck(this, Instructions);
+	  function Introduction() {
+	    _classCallCheck(this, Introduction);
 	
-	    return _possibleConstructorReturn(this, (Instructions.__proto__ || Object.getPrototypeOf(Instructions)).call(this));
+	    return _possibleConstructorReturn(this, (Introduction.__proto__ || Object.getPrototypeOf(Introduction)).call(this));
 	  }
 	
-	  _createClass(Instructions, [{
+	  _createClass(Introduction, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
 	      var $instructions = (0, _jquery2.default)('#instructions');
@@ -48749,7 +48749,7 @@
 	          _react2.default.createElement(
 	            'h1',
 	            null,
-	            'Instructions',
+	            'A* Algorithm Visualizer',
 	            _react2.default.createElement(
 	              'span',
 	              { id: 'hide-instructions' },
@@ -48760,6 +48760,12 @@
 	        _react2.default.createElement(
 	          'p',
 	          null,
+	          _react2.default.createElement(
+	            'span',
+	            { style: { textDecoration: 'underline' } },
+	            'Instructions:'
+	          ),
+	          _react2.default.createElement('br', null),
 	          'Click within the white grid and drag mouse to create obstacles.',
 	          _react2.default.createElement('br', null),
 	          'Drag the ',
@@ -48776,7 +48782,7 @@
 	            { className: 'red' },
 	            'red'
 	          ),
-	          ' node a set an end position.',
+	          ' node to a set an end position.',
 	          _react2.default.createElement('br', null),
 	          'Use the right hand-panel to clear obstacles, path, and solve.'
 	        )
@@ -48784,10 +48790,10 @@
 	    }
 	  }]);
 	
-	  return Instructions;
+	  return Introduction;
 	}(_react2.default.Component);
 	
-	exports.default = Instructions;
+	exports.default = Introduction;
 
 /***/ },
 /* 177 */
