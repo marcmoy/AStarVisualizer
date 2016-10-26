@@ -29,7 +29,7 @@ class Introduction extends React.Component {
           a start position.<br/>
           3. Drag the <span className='red'>red</span> node to a set
           an end position.<br/>
-          4. Use the right hand-panel to clear the grid and solve.
+          4. Use the right hand-panel to clear the grid, create a random maze, or solve.
         </p>
       </div>
     );

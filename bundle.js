@@ -48791,7 +48791,7 @@
 	          ),
 	          ' node to a set an end position.',
 	          _react2.default.createElement('br', null),
-	          '4. Use the right hand-panel to clear the grid and solve.'
+	          '4. Use the right hand-panel to clear the grid, create a random maze, or solve.'
 	        )
 	      );
 	    }
