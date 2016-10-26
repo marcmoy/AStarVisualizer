@@ -26,16 +26,16 @@ td {
 td.start { background-color: green }
 td.end { background-color: red }
 td.empty { background: white }
-td.wall { background-color: #827676 }
+td.wall { background-color: #aba6a6 }
 td.closed { background-color: rgba(243,120,111,0.30) }
 td.open { background-color: rgba(58,243,58,0.30) }
 td.path { background-color: blue }
 /*, td.open, td.closed, td.path*/
 td.wall {
-  -webkit-animation: insertTile 0.4s normal; /* Safari 4+ */
-  -moz-animation:    insertTile 0.4s normal; /* Fx 5+ */
-  -o-animation:      insertTile 0.4s normal; /* Opera 12+ */
-  animation:         insertTile 0.4s normal;
+  -webkit-animation: insertTile 0.2s normal; /* Safari 4+ */
+  -moz-animation:    insertTile 0.2s normal; /* Fx 5+ */
+  -o-animation:      insertTile 0.2s normal; /* Opera 12+ */
+  animation:         insertTile 0.2s normal;
 }
 
 @-webkit-keyframes insertTile { from {opacity: 0} to {opacity: 1} }
@@ -69,7 +69,7 @@ button {
   text-decoration: none;
   border: none;
   margin: 8px 4px;
-  width: 8em;
+  width: 10em;
   float: left;
   cursor: pointer;
 }
@@ -119,7 +119,7 @@ button:disabled {
 #hide-instructions {
   position: absolute;
   right: 20px;
-  font-size: 12px;
+  font-size: 16px;
   cursor: pointer;
 }
 

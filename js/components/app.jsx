@@ -14,6 +14,7 @@ class App extends React.Component {
       solving: false
     };
     this.resetGrid = this.resetGrid.bind(this);
+    this.randomWalls = this.randomWalls.bind(this);
     this.solve = this.solve.bind(this);
     this.clearWalls = this.clearWalls.bind(this);
     this.clearPath = this.clearPath.bind(this);
@@ -43,6 +44,23 @@ class App extends React.Component {
     this.setState({ grid: grid, startPos: startPos, endPos: endPos });
   }
 
+  randomWalls() {
+    let grid = this.state.grid;
+    let startPos = this.state.startPos;
+    let endPos = this.state.endPos;
+
+    for (let i = 0; i < grid.length; i++) {
+      let row = grid[i];
+      for (let j = 0; j < row.length; j++) {
+        if (i === startPos[0] && j === startPos[1]) continue;
+        if (i === endPos[0] && j === endPos[1]) continue;
+        let option = Math.random() < 0.3 ? 'wall' : 'empty';
+        grid[i][j].className = option;
+      }
+    }
+    this.setState({ grid: grid });
+  }
+
   clearWalls() {
     if (this.state.solving) return;
     let clearedGrid = clearGrid(this.state.grid, ['wall']);
@@ -63,7 +81,7 @@ class App extends React.Component {
     let steps = [];
     let recordStep = step => steps.push(step);
     aStarSolver(grid, this.state.startPos, this.state.endPos, recordStep);
-    this.animateSteps(grid, steps);
+    this.setState({ grid: grid, solving: false });
   }
 
   animateSteps(grid, steps) {
@@ -168,8 +186,7 @@ class App extends React.Component {
         </div>
         <Settings
           resetGrid={this.resetGrid}
-          clearWalls={this.clearWalls}
-          clearPath={this.clearPath}
+          randomWalls={this.randomWalls}
           solve={this.solve}
           solving={this.state.solving}
         />

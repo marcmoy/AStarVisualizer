@@ -21489,6 +21489,7 @@
 	      solving: false
 	    };
 	    _this.resetGrid = _this.resetGrid.bind(_this);
+	    _this.randomWalls = _this.randomWalls.bind(_this);
 	    _this.solve = _this.solve.bind(_this);
 	    _this.clearWalls = _this.clearWalls.bind(_this);
 	    _this.clearPath = _this.clearPath.bind(_this);
@@ -21525,6 +21526,24 @@
 	      this.setState({ grid: grid, startPos: startPos, endPos: endPos });
 	    }
 	  }, {
+	    key: 'randomWalls',
+	    value: function randomWalls() {
+	      var grid = this.state.grid;
+	      var startPos = this.state.startPos;
+	      var endPos = this.state.endPos;
+	
+	      for (var i = 0; i < grid.length; i++) {
+	        var row = grid[i];
+	        for (var j = 0; j < row.length; j++) {
+	          if (i === startPos[0] && j === startPos[1]) continue;
+	          if (i === endPos[0] && j === endPos[1]) continue;
+	          var option = Math.random() < 0.3 ? 'wall' : 'empty';
+	          grid[i][j].className = option;
+	        }
+	      }
+	      this.setState({ grid: grid });
+	    }
+	  }, {
 	    key: 'clearWalls',
 	    value: function clearWalls() {
 	      if (this.state.solving) return;
@@ -21550,7 +21569,7 @@
 	        return steps.push(step);
 	      };
 	      (0, _a_star_solver2.default)(grid, this.state.startPos, this.state.endPos, recordStep);
-	      this.animateSteps(grid, steps);
+	      this.setState({ grid: grid, solving: false });
 	    }
 	  }, {
 	    key: 'animateSteps',
@@ -21671,8 +21690,7 @@
 	        ),
 	        _react2.default.createElement(_settings2.default, {
 	          resetGrid: this.resetGrid,
-	          clearWalls: this.clearWalls,
-	          clearPath: this.clearPath,
+	          randomWalls: this.randomWalls,
 	          solve: this.solve,
 	          solving: this.state.solving
 	        })
@@ -21794,7 +21812,7 @@
 	              {
 	                onClick: this.props.resetGrid,
 	                disabled: this.props.solving },
-	              'Reset grid'
+	              'Empty maze'
 	            )
 	          ),
 	          _react2.default.createElement(
@@ -21803,20 +21821,9 @@
 	            _react2.default.createElement(
 	              'button',
 	              {
-	                onClick: this.props.clearWalls,
+	                onClick: this.props.randomWalls,
 	                disabled: this.props.solving },
-	              'Clear walls'
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'li',
-	            null,
-	            _react2.default.createElement(
-	              'button',
-	              {
-	                onClick: this.props.clearPath,
-	                disabled: this.props.solving },
-	              'Clear path'
+	              'Create maze'
 	            )
 	          ),
 	          _react2.default.createElement(
@@ -48766,9 +48773,9 @@
 	            'Instructions:'
 	          ),
 	          _react2.default.createElement('br', null),
-	          'Click within the white grid and drag mouse to create obstacles.',
+	          '1. Click within the white grid and drag mouse to create obstacles.',
 	          _react2.default.createElement('br', null),
-	          'Drag the ',
+	          '2. Drag the ',
 	          _react2.default.createElement(
 	            'span',
 	            { className: 'green' },
@@ -48776,7 +48783,7 @@
 	          ),
 	          ' node to set a start position.',
 	          _react2.default.createElement('br', null),
-	          'Drag the ',
+	          '3. Drag the ',
 	          _react2.default.createElement(
 	            'span',
 	            { className: 'red' },
@@ -48784,7 +48791,7 @@
 	          ),
 	          ' node to a set an end position.',
 	          _react2.default.createElement('br', null),
-	          'Use the right hand-panel to clear obstacles, path, and solve.'
+	          '4. Use the right hand-panel to clear the grid and solve.'
 	        )
 	      );
 	    }

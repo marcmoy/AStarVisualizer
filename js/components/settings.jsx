@@ -21,21 +21,14 @@ class Settings extends React.Component {
             <button
               onClick={this.props.resetGrid}
               disabled={this.props.solving}>
-              Reset grid
+              Empty maze
             </button>
           </li>
           <li>
             <button
-              onClick={this.props.clearWalls}
+              onClick={this.props.randomWalls}
               disabled={this.props.solving}>
-              Clear walls
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={this.props.clearPath}
-              disabled={this.props.solving}>
-              Clear path
+              Create maze
             </button>
           </li>
           <li>

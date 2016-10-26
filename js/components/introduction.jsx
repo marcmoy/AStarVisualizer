@@ -24,12 +24,12 @@ class Introduction extends React.Component {
         </header>
         <p>
           <span style={{textDecoration: 'underline'}}>Instructions:</span><br/>
-          Click within the white grid and drag mouse to create obstacles.<br/>
-          Drag the <span className='green'>green</span> node to set
+          1. Click within the white grid and drag mouse to create obstacles.<br/>
+          2. Drag the <span className='green'>green</span> node to set
           a start position.<br/>
-          Drag the <span className='red'>red</span> node to a set
+          3. Drag the <span className='red'>red</span> node to a set
           an end position.<br/>
-          Use the right hand-panel to clear obstacles, path, and solve.
+          4. Use the right hand-panel to clear the grid and solve.
         </p>
       </div>
     );
