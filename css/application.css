@@ -99,7 +99,7 @@ button:active {
 button:disabled {
   background: #ddd;
   box-shadow: 0 2px #ccc;
-  cursor: progress;
+  cursor: not-allowed;
 }
 
 #instructions {

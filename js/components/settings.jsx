@@ -19,9 +19,9 @@ class Settings extends React.Component {
         <ul>
           <li>
             <button
-              onClick={this.props.resetGrid}
+              onClick={this.props.resetMaze}
               disabled={this.props.solving}>
-              Empty maze
+              Reset maze
             </button>
           </li>
           <li>
@@ -34,7 +34,7 @@ class Settings extends React.Component {
           <li>
             <button
               onClick={this.props.solve}
-              disabled={this.props.solving}>
+              disabled={this.props.solving || this.props.solved}>
               {this.props.solving ? 'Solving...' : 'Solve'}
             </button>
           </li>

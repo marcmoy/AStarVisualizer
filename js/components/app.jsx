@@ -11,19 +11,19 @@ class App extends React.Component {
       startDrag: false,
       endDrag: false,
       wallDrag: false,
-      solving: false
+      solving: false,
+      solved: false
     };
-    this.resetGrid = this.resetGrid.bind(this);
+    this.createGrid = this.createGrid.bind(this);
+    this.resetMaze = this.resetMaze.bind(this);
     this.randomWalls = this.randomWalls.bind(this);
     this.solve = this.solve.bind(this);
-    this.clearWalls = this.clearWalls.bind(this);
-    this.clearPath = this.clearPath.bind(this);
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseOver = this.handleMouseOver.bind(this);
   }
 
   componentWillMount() {
-    this.resetGrid();
+    this.createGrid();
   }
 
   componentDidMount() {
@@ -32,7 +32,7 @@ class App extends React.Component {
     });
   }
 
-  resetGrid() {
+  createGrid() {
     if (this.state.solving) return;
     let grid = initialGrid();
     let height = grid.length;
@@ -41,7 +41,28 @@ class App extends React.Component {
     let endPos = [ Math.floor(height * 0.5), Math.floor(width * (9/10)) ];
     grid[startPos[0]][startPos[1]].className = 'start';
     grid[endPos[0]][endPos[1]].className = 'end';
-    this.setState({ grid: grid, startPos: startPos, endPos: endPos });
+    this.setState({
+      grid: grid,
+      startPos: startPos,
+      endPos: endPos,
+      solved: false
+    });
+  }
+
+  resetMaze() {
+    let grid = this.state.grid;
+    let startPos = this.state.startPos;
+    let endPos = this.state.endPos;
+
+    for (let i = 0; i < grid.length; i++) {
+      let row = grid[i];
+      for (let j = 0; j < row.length; j++) {
+        if (i === startPos[0] && j === startPos[1]) continue;
+        if (i === endPos[0] && j === endPos[1]) continue;
+        grid[i][j].className = 'empty';
+      }
+    }
+    this.setState({ grid: grid, solved: false });
   }
 
   randomWalls() {
@@ -58,32 +79,19 @@ class App extends React.Component {
         grid[i][j].className = option;
       }
     }
-    this.setState({ grid: grid });
-  }
-
-  clearWalls() {
-    if (this.state.solving) return;
-    let clearedGrid = clearGrid(this.state.grid, ['wall']);
-    this.setState({ grid: clearedGrid });
-  }
-
-  clearPath() {
-    if (this.state.solving) return;
-    let clearedGrid = clearGrid(this.state.grid, ['path','open','closed']);
-    this.setState({ grid: clearedGrid });
-    $('td.open').removeClass('open').addClass('empty');
-    $('td.closed').removeClass('closed').addClass('empty');
+    this.setState({ grid: grid, solved: false });
   }
 
   solve() {
     this.setState({ solving: true });
     let grid = cloneGrid(this.state.grid);
     let steps = [];
-    let recordStep = step => steps.push(step);
+    let recordStep = step => steps.push(step); // part of animation feature
     aStarSolver(grid, this.state.startPos, this.state.endPos, recordStep);
-    this.setState({ grid: grid, solving: false });
+    this.setState({ grid: grid, solving: false, solved: true });
   }
 
+  // Animation is too slow. Remove this feature until it looks cleaner
   animateSteps(grid, steps) {
     let i = 0;
     let max = steps.length;
@@ -185,9 +193,10 @@ class App extends React.Component {
           </table>
         </div>
         <Settings
-          resetGrid={this.resetGrid}
+          resetMaze={this.resetMaze}
           randomWalls={this.randomWalls}
           solve={this.solve}
+          solved={this.state.solved}
           solving={this.state.solving}
         />
       </div>
